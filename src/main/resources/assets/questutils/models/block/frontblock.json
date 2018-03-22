@@ -1,0 +1,12 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "particle": "#front",
+    "down": "questutils:blocks/bottom",
+    "up": "questutils:blocks/top",
+    "north": "#front",
+    "east": "questutils:blocks/side",
+    "south": "questutils:blocks/side",
+    "west": "questutils:blocks/side"
+  }
+}

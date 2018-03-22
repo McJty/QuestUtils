@@ -1,0 +1,6 @@
+{
+  "parent": "questutils:block/frontblock",
+  "textures": {
+    "front": "questutils:blocks/item_comparator"
+  }
+}

@@ -1,0 +1,15 @@
+[
+{
+  "modid": "questutils",
+  "name": "QuestUtils",
+  "description": "Quest Utilities",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["McJty"],
+  "credits": "McJty",
+  "logoFile": "",
+  "screenshots": []
+}
+]

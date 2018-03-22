@@ -1,5 +1,5 @@
 {
-  "parent": "questutils:block/frontblock",
+  "parent": "questutils:block/frontblock_redstone",
   "textures": {
     "front": "questutils:blocks/item_comparator"
   }

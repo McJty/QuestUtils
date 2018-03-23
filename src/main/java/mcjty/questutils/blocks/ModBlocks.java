@@ -1,5 +1,6 @@
 package mcjty.questutils.blocks;
 
+import mcjty.questutils.blocks.itemcomparator.ItemComparatorBlock;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 

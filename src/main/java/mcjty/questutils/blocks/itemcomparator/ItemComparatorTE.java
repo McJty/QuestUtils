@@ -1,18 +1,21 @@
-package mcjty.questutils.blocks;
+package mcjty.questutils.blocks.itemcomparator;
 
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.RedstoneMode;
+import mcjty.questutils.blocks.QUTileEntity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
 import java.util.Map;
 
-public class ItemComparatorTE extends GenericTileEntity implements DefaultSidedInventory {
+public class ItemComparatorTE extends QUTileEntity implements DefaultSidedInventory {
 
     public static final String CMD_RSMODE = "rsMode";
 
@@ -20,11 +23,6 @@ public class ItemComparatorTE extends GenericTileEntity implements DefaultSidedI
     private boolean inAlarm = false;
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, ItemComparatorContainer.factory, 32);
-
-    @Override
-    protected boolean needsRedstoneMode() {
-        return true;
-    }
 
     @Override
     protected boolean needsCustomInvWrapper() {
@@ -36,7 +34,7 @@ public class ItemComparatorTE extends GenericTileEntity implements DefaultSidedI
         return inventoryHelper;
     }
 
-    private void detect() {
+    public void detect() {
         boolean ok = true;
 
         int[] amounts = new int[16];
@@ -64,7 +62,7 @@ public class ItemComparatorTE extends GenericTileEntity implements DefaultSidedI
             ItemStack item = getStackInSlot(i+16);
             if (!item.isEmpty()) {
                 if (ItemStack.areItemsEqual(matcher, item) && ItemStack.areItemStackTagsEqual(matcher, item)) {
-                    toFind -= Math.max(toFind, amounts[i]);
+                    toFind -= Math.min(toFind, amounts[i]);
                     if (toFind <= 0) {
                         return 0;      // We found enough
                     }
@@ -80,12 +78,33 @@ public class ItemComparatorTE extends GenericTileEntity implements DefaultSidedI
             ItemStack item = getStackInSlot(i+16);
             if (!item.isEmpty()) {
                 if (ItemStack.areItemsEqual(matcher, item) && ItemStack.areItemStackTagsEqual(matcher, item)) {
-                    toFind -= Math.max(toFind, amounts[i]);
-                    amounts[i] -= toFind;
+                    int consume = Math.min(toFind, amounts[i]);
+                    toFind -= consume;
+                    amounts[i] -= consume;
                     if (toFind <= 0) {
                         return;
                     }
                 }
+            }
+        }
+    }
+
+    @Override
+    public void setPowerInput(int powered) {
+        if (powered != powerLevel) {
+            super.setPowerInput(powered);
+            if (powered > 0) {
+                dump();
+            }
+        }
+    }
+
+    public void dump() {
+        for (int i = 0 ; i < 16 ; i++) {
+            ItemStack stack = getStackInSlot(i+16);
+            if (!stack.isEmpty()) {
+                stack = InventoryHelper.insertItem(world, pos, EnumFacing.UP, stack);
+                setInventorySlotContents(i+16, stack);
             }
         }
     }
@@ -152,6 +171,18 @@ public class ItemComparatorTE extends GenericTileEntity implements DefaultSidedI
     @Override
     public boolean isUsableByPlayer(EntityPlayer player) {
         return canPlayerAccess(player);
+    }
+
+    @Override
+    public void readRestorableFromNBT(NBTTagCompound tagCompound) {
+        super.readRestorableFromNBT(tagCompound);
+        readBufferFromNBT(tagCompound, inventoryHelper);
+    }
+
+    @Override
+    public void writeRestorableToNBT(NBTTagCompound tagCompound) {
+        super.writeRestorableToNBT(tagCompound);
+        writeBufferToNBT(tagCompound, inventoryHelper);
     }
 
     @Override

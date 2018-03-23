@@ -1,9 +1,9 @@
-package mcjty.questutils.blocks;
+package mcjty.questutils.blocks.itemcomparator;
 
-import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericBlock;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.questutils.QuestUtils;
+import mcjty.questutils.blocks.QUBlock;
 import mcjty.questutils.proxy.GuiProxy;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -14,10 +14,10 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class ItemComparatorBlock extends GenericBlock<ItemComparatorTE, ItemComparatorContainer> {
+public class ItemComparatorBlock extends QUBlock<ItemComparatorTE, ItemComparatorContainer> {
 
     public ItemComparatorBlock() {
-        super(QuestUtils.instance, Material.IRON, ItemComparatorTE.class, ItemComparatorContainer.class, "item_comparator", true);
+        super(ItemComparatorTE.class, ItemComparatorContainer.class, "item_comparator");
     }
 
     @Override
@@ -53,5 +53,7 @@ public class ItemComparatorBlock extends GenericBlock<ItemComparatorTE, ItemComp
         }
         return 0;
     }
+
+
 
 }

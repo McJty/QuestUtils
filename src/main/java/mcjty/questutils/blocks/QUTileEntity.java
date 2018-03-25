@@ -2,8 +2,14 @@ package mcjty.questutils.blocks;
 
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
+import mcjty.questutils.data.QUData;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 import java.util.Map;
 
@@ -18,8 +24,32 @@ public class QUTileEntity extends GenericTileEntity {
     }
 
     public void setIdentifier(String identifier) {
+        if (!world.isRemote) {
+            QUData.getData().removeEntry(identifier);
+            QUData.getData().removeEntry(world.provider.getDimension(), pos);
+        }
         this.identifier = identifier;
+        if (!world.isRemote) {
+            QUData.getData().updateEntry(identifier, world.provider.getDimension(), pos);
+        }
         markDirtyClient();
+    }
+
+    @Override
+    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+        super.onBlockPlacedBy(world, pos, state, placer, stack);
+        if (!world.isRemote) {
+            QUData.getData().updateEntry(identifier, world.provider.getDimension(), pos);
+        }
+    }
+
+    @Override
+    public void onBlockBreak(World workd, BlockPos pos, IBlockState state) {
+        super.onBlockBreak(workd, pos, state);
+        if (!world.isRemote) {
+            QUData.getData().removeEntry(identifier);
+            QUData.getData().removeEntry(world.provider.getDimension(), pos);
+        }
     }
 
     @Override

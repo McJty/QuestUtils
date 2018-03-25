@@ -1,5 +1,7 @@
 package mcjty.questutils.blocks;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.questutils.data.QUData;
@@ -21,6 +23,10 @@ public class QUTileEntity extends GenericTileEntity {
 
     public String getIdentifier() {
         return identifier;
+    }
+
+    public boolean hasIdentifier() {
+        return identifier != null && !identifier.trim().isEmpty();
     }
 
     public void setIdentifier(String identifier) {
@@ -89,4 +95,14 @@ public class QUTileEntity extends GenericTileEntity {
         return false;
     }
 
+
+    public void writeToJson(JsonObject object) {
+        if (hasIdentifier()) {
+            // The identifier is put here as a reference but is not read in readFromJson
+            object.add("id", new JsonPrimitive(identifier));
+        }
+    }
+
+    public void readFromJson(JsonObject object) {
+    }
 }

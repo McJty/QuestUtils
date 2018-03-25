@@ -58,7 +58,7 @@ public class ItemComparatorGui extends GenericGuiContainer<ItemComparatorTE> {
 
         idField = new TextField(mc, this)
                 .setLayoutHint(new PositionalLayout.PositionalHint(30, 6, 143, 14));
-        idField.setText(tileEntity.getIdentifier());
+        idField.setText(tileEntity.getIdentifier() == null ? "" : tileEntity.getIdentifier());
         idField.addTextEvent((parent, newText) -> {
             updateId();
         });

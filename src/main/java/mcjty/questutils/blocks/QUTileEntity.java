@@ -24,12 +24,16 @@ public class QUTileEntity extends GenericTileEntity {
     }
 
     public void setIdentifier(String identifier) {
-        if (!world.isRemote) {
+        if (!world.isRemote && identifier != null) {
             QUData.getData().removeEntry(identifier);
             QUData.getData().removeEntry(world.provider.getDimension(), pos);
         }
-        this.identifier = identifier;
-        if (!world.isRemote) {
+        if (identifier == null || identifier.trim().isEmpty()) {
+            this.identifier = null;
+        } else {
+            this.identifier = identifier;
+        }
+        if (!world.isRemote && identifier != null) {
             QUData.getData().updateEntry(identifier, world.provider.getDimension(), pos);
         }
         markDirtyClient();
@@ -55,13 +59,19 @@ public class QUTileEntity extends GenericTileEntity {
     @Override
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
-        identifier = tagCompound.getString("quid");
+        if (tagCompound.hasKey("quid")) {
+            identifier = tagCompound.getString("quid");
+        } else {
+            identifier = null;
+        }
     }
 
     @Override
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
-        tagCompound.setString("quid", identifier);
+        if (identifier != null) {
+            tagCompound.setString("quid", identifier);
+        }
     }
 
     @Override

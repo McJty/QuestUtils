@@ -30,7 +30,7 @@ public class QUTileEntity extends GenericTileEntity {
     }
 
     public void setIdentifier(String identifier) {
-        if (!world.isRemote && identifier != null) {
+        if (!world.isRemote && hasIdentifier()) {
             QUData.getData().removeEntry(identifier);
             QUData.getData().removeEntry(world.provider.getDimension(), pos);
         }
@@ -39,7 +39,7 @@ public class QUTileEntity extends GenericTileEntity {
         } else {
             this.identifier = identifier;
         }
-        if (!world.isRemote && identifier != null) {
+        if (!world.isRemote && hasIdentifier()) {
             QUData.getData().updateEntry(identifier, world.provider.getDimension(), pos);
         }
         markDirtyClient();
@@ -48,7 +48,7 @@ public class QUTileEntity extends GenericTileEntity {
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
         super.onBlockPlacedBy(world, pos, state, placer, stack);
-        if (!world.isRemote) {
+        if (!world.isRemote && hasIdentifier()) {
             QUData.getData().updateEntry(identifier, world.provider.getDimension(), pos);
         }
     }
@@ -57,7 +57,9 @@ public class QUTileEntity extends GenericTileEntity {
     public void onBlockBreak(World workd, BlockPos pos, IBlockState state) {
         super.onBlockBreak(workd, pos, state);
         if (!world.isRemote) {
-            QUData.getData().removeEntry(identifier);
+            if (hasIdentifier()) {
+                QUData.getData().removeEntry(identifier);
+            }
             QUData.getData().removeEntry(world.provider.getDimension(), pos);
         }
     }

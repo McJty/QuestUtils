@@ -24,16 +24,16 @@ public class ScreenTileEntity extends QUTileEntity implements ITickable, Default
     public static final String CMD_HOVER = "hover";
     public static final String CMD_SETBRIGHT = "setBright";
     public static final String CMD_SETTRUETYPE = "setTruetype";
+    public static final String CMD_UPDATE = "cmdUpdate";
 
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, ScreenContainer.factory, ScreenContainer.SCREEN_MODULES);
+    private InventoryHelper inventoryHelper = new InventoryHelper(this, ScreenContainer.factory, 1);
+    private String title;
+    private String[] status = new String[3];
 
     // This is a map that contains a map from the coordinate of the screen to a map of screen data from the server indexed by slot number,
 //    public static Map<GlobalCoordinate, Map<Integer, IModuleData>> screenData = new HashMap<>();
 
     private boolean needsServerData = false;
-    private boolean showHelp = true;
-    private boolean powerOn = false;        // True if screen is powered.
-    private boolean connected = false;      // True if screen is connected to a controller.
     private int size = 0;                   // Size of screen (0 is normal, 1 is large, 2 is huge)
     private boolean transparent = false;    // Transparent screen.
     private int color = 0;                  // Color of the screen.
@@ -50,6 +50,8 @@ public class ScreenTileEntity extends QUTileEntity implements ITickable, Default
     public static final int SIZE_NORMAL = 0;
     public static final int SIZE_LARGE = 1;
     public static final int SIZE_HUGE = 2;
+    public static final int SIZE_ENOURMOUS = 3;
+    public static final int SIZE_GIGANTIC = 4;
 
     // Cached server screen modules
     private List<ActivatedModule> clickedModules = new ArrayList<>();
@@ -67,9 +69,6 @@ public class ScreenTileEntity extends QUTileEntity implements ITickable, Default
             this.y = y;
         }
     }
-
-    private int totalRfPerTick = 0;     // The total rf per tick for all modules.
-    private boolean controllerNeededInCreative = false; // If any of this screen's modules use the screen controller, thus requiring one even for creative screens.
 
     public long lastTime = 0;
 
@@ -97,6 +96,14 @@ public class ScreenTileEntity extends QUTileEntity implements ITickable, Default
         } else {
             checkStateServer();
         }
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String[] getStatus() {
+        return status;
     }
 
     private void checkStateClient() {
@@ -169,20 +176,6 @@ public class ScreenTileEntity extends QUTileEntity implements ITickable, Default
     @Override
     public ItemStack getStackInSlot(int index) {
         return inventoryHelper.getStackInSlot(index);
-    }
-
-    @Override
-    public ItemStack decrStackSize(int index, int amount) {
-        resetModules();
-        return inventoryHelper.decrStackSize(index, amount);
-    }
-
-    private void resetModules() {
-//        clientScreenModules = null;
-//        screenModules = null;
-        clickedModules.clear();
-        showHelp = true;
-//        computerModules.clear();
     }
 
     public static class ModuleRaytraceResult {
@@ -372,12 +365,6 @@ public class ScreenTileEntity extends QUTileEntity implements ITickable, Default
     }
 
     @Override
-    public void setInventorySlotContents(int index, ItemStack stack) {
-        inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
-        resetModules();
-    }
-
-    @Override
     public int getInventoryStackLimit() {
         return 1;
     }
@@ -395,35 +382,26 @@ public class ScreenTileEntity extends QUTileEntity implements ITickable, Default
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        powerOn = tagCompound.getBoolean("powerOn");
-        connected = tagCompound.getBoolean("connected");
-        totalRfPerTick = tagCompound.getInteger("rfPerTick");
-        controllerNeededInCreative = tagCompound.getBoolean("controllerNeededInCreative");
     }
 
     @Override
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound, inventoryHelper);
-        resetModules();
-        if (tagCompound.hasKey("large")) {
-            size = tagCompound.getBoolean("large") ? 1 : 0;
-        } else {
-            size = tagCompound.getInteger("size");
-        }
+        size = tagCompound.getInteger("size");
         transparent = tagCompound.getBoolean("transparent");
         color = tagCompound.getInteger("color");
         bright = tagCompound.getBoolean("bright");
         trueTypeMode = tagCompound.getInteger("truetype");
+        title = tagCompound.getString("title");
+        status[0] = tagCompound.getString("status0");
+        status[1] = tagCompound.getString("status1");
+        status[2] = tagCompound.getString("status2");
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setBoolean("powerOn", powerOn);
-        tagCompound.setBoolean("connected", connected);
-        tagCompound.setInteger("rfPerTick", totalRfPerTick);
-        tagCompound.setBoolean("controllerNeededInCreative", controllerNeededInCreative);
         return tagCompound;
     }
 
@@ -436,6 +414,10 @@ public class ScreenTileEntity extends QUTileEntity implements ITickable, Default
         tagCompound.setInteger("color", color);
         tagCompound.setBoolean("bright", bright);
         tagCompound.setInteger("truetype", trueTypeMode);
+        tagCompound.setString("title", title);
+        tagCompound.setString("status0", status[0]);
+        tagCompound.setString("status1", status[1]);
+        tagCompound.setString("status2", status[2]);
     }
 
     public int getColor() {
@@ -481,44 +463,6 @@ public class ScreenTileEntity extends QUTileEntity implements ITickable, Default
 
     public boolean isTransparent() {
         return transparent;
-    }
-
-    public void setPower(boolean power) {
-        if (powerOn == power) {
-            return;
-        }
-        powerOn = power;
-        markDirtyClient();
-    }
-
-    public boolean isPowerOn() {
-        return powerOn;
-    }
-
-    public boolean isRenderable() {
-        if (powerOn) {
-            return true;
-        }
-        if (isShowHelp()) {
-            return true;    // True because then we give help
-        }
-        return isCreative();
-    }
-
-    protected boolean isCreative() {
-        return false;
-    }
-
-    public void setConnected(boolean c) {
-        if (connected == c) {
-            return;
-        }
-        connected = c;
-        markDirtyClient();
-    }
-
-    public boolean isConnected() {
-        return connected;
     }
 
     public void updateModuleData(int slot, NBTTagCompound tagCompound) {
@@ -590,11 +534,6 @@ public class ScreenTileEntity extends QUTileEntity implements ITickable, Default
 //        }
 //        return clientScreenModules;
 //    }
-
-    // Called client side only
-    public boolean isShowHelp() {
-        return showHelp;
-    }
 
     public boolean isNeedsServerData() {
         return needsServerData;
@@ -710,7 +649,14 @@ public class ScreenTileEntity extends QUTileEntity implements ITickable, Default
         if (rc) {
             return true;
         }
-        if (CMD_CLICK.equals(command)) {
+        if (CMD_UPDATE.equals(command)) {
+            title = args.get("title").getString();
+            status[0] = args.get("status0").getString();
+            status[1] = args.get("status1").getString();
+            status[2] = args.get("status2").getString();
+            markDirtyClient();
+            return true;
+        } else if (CMD_CLICK.equals(command)) {
             int x = args.get("x").getInteger();
             int y = args.get("y").getInteger();
             int module = args.get("module").getInteger();

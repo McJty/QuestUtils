@@ -10,14 +10,13 @@ import net.minecraft.inventory.IInventory;
 public class ScreenContainer extends GenericContainer {
     public static final String CONTAINER_INVENTORY = "container";
 
-    public static final int SLOT_MODULES = 0;
-    public static final int SCREEN_MODULES = 11;
+    public static final int SLOT_ITEM = 0;
 
     public static final ContainerFactory factory = new ContainerFactory() {
         @Override
         protected void setup() {
-            addSlotBox(new SlotDefinition(SlotType.SLOT_INPUT), CONTAINER_INVENTORY, SLOT_MODULES, 7, 8, 1, 18, SCREEN_MODULES, 18);
-            layoutPlayerInventorySlots(85, 142);
+            addSlotBox(new SlotDefinition(SlotType.SLOT_INPUT), CONTAINER_INVENTORY, SLOT_ITEM, 12, 47, 1, 18, 1, 18);
+            layoutPlayerInventorySlots(12, 142);
         }
     };
 

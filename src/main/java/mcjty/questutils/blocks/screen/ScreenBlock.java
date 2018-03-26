@@ -292,6 +292,10 @@ public class ScreenBlock extends QUBlock<ScreenTileEntity, ScreenContainer> {
             new Setup(ScreenTileEntity.SIZE_LARGE, true),
             new Setup(ScreenTileEntity.SIZE_HUGE, false),
             new Setup(ScreenTileEntity.SIZE_HUGE, true),
+            new Setup(ScreenTileEntity.SIZE_ENOURMOUS, false),
+            new Setup(ScreenTileEntity.SIZE_ENOURMOUS, true),
+            new Setup(ScreenTileEntity.SIZE_GIGANTIC, false),
+            new Setup(ScreenTileEntity.SIZE_GIGANTIC, true),
     };
 
     @Override

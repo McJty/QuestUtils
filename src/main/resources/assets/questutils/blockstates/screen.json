@@ -1,0 +1,24 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "questutils:screen"
+  },
+  "variants": {
+    "normal": [{}],
+    "inventory": [{ "model": "builtin/entity" }],
+    "facing": {
+      "north": {},
+      "south": {},
+      "west": {},
+      "east": {},
+      "up": {"x": -90},
+      "down": {"x": 90}
+    },
+    "horizontal_facing": {
+      "north": {},
+      "south": {"y": 180},
+      "west": {"y": 270},
+      "east": {"y": 90}
+    }
+  }
+}

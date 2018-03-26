@@ -11,6 +11,7 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 public class GuiProxy implements IGuiHandler {
 
     public static final int GUI_ITEM_COMPARATOR = 0;
+    public static final int GUI_SCREEN = 1;
 
     @Override
     public Object getServerGuiElement(int guiid, EntityPlayer entityPlayer, World world, int x, int y, int z) {

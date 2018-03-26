@@ -33,9 +33,9 @@ public class CmdQU extends CommandBase {
     private final static Map<String, ICommandHandler> COMMANDS = new HashMap();
 
     static {
-        COMMANDS.put("list", (sender, args) -> list(sender, args));
-        COMMANDS.put("save", (sender, args) -> save(sender, args));
-        COMMANDS.put("load", (sender, args) -> load(sender, args));
+        COMMANDS.put("list", CmdQU::list);
+        COMMANDS.put("save", CmdQU::save);
+        COMMANDS.put("load", CmdQU::load);
     }
 
 

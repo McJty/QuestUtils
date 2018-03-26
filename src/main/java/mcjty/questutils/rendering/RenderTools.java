@@ -69,10 +69,10 @@ public class RenderTools {
         GlStateManager.disableAlpha();
         GlStateManager.disableBlend();
         Tessellator tessellator = Tessellator.getInstance();
-        renderQuad(tessellator, x, y-3, 16, 1, 255, 255, 0, 0);
-        renderQuad(tessellator, x, y+14, 16, 1, 255, 255, 0, 0);
-        renderQuad(tessellator, x, y-3, 1, 16, 255, 255, 0, 0);
-        renderQuad(tessellator, x+15, y, 1, 16, 255, 255, 0, 0);
+        renderQuad(tessellator, x-1, y-6, 18, 1, 255, 128, 0, 0);
+        renderQuad(tessellator, x-1, y+11, 18, 1, 255, 128, 0, 0);
+        renderQuad(tessellator, x-1, y-5, 1, 16, 255, 128, 0, 0);
+        renderQuad(tessellator, x+16, y-5, 1, 16, 255, 128, 0, 0);
         GlStateManager.enableAlpha();
         GlStateManager.enableTexture2D();
         GlStateManager.enableLighting();

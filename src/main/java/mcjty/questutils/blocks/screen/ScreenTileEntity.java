@@ -414,10 +414,18 @@ public class ScreenTileEntity extends QUTileEntity implements ITickable, Default
         tagCompound.setInteger("color", color);
         tagCompound.setBoolean("bright", bright);
         tagCompound.setInteger("truetype", trueTypeMode);
-        tagCompound.setString("title", title);
-        tagCompound.setString("status0", status[0]);
-        tagCompound.setString("status1", status[1]);
-        tagCompound.setString("status2", status[2]);
+        if (title != null) {
+            tagCompound.setString("title", title);
+        }
+        if (status[0] != null) {
+            tagCompound.setString("status0", status[0]);
+        }
+        if (status[1] != null) {
+            tagCompound.setString("status1", status[1]);
+        }
+        if (status[2] != null) {
+            tagCompound.setString("status2", status[2]);
+        }
     }
 
     public int getColor() {

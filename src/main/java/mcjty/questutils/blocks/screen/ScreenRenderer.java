@@ -157,11 +157,14 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
         }
 
         if (tileEntity.getTitle() != null) {
-            RenderTools.renderText(8, 8, tileEntity.getTitle(), factor*2, 0xffffff00);
+            int width = Minecraft.getMinecraft().fontRenderer.getStringWidth(tileEntity.getTitle()) * 2;
+            int textx = 2;
+            textx += (128-width) / 4;
+            RenderTools.renderText(textx, 8, tileEntity.getTitle(), factor*2, 0xffffff00);
         }
-        RenderTools.renderItem(13, 18, tileEntity.getStackInSlot(ScreenContainer.SLOT_ITEM), factor);
+        RenderTools.renderItem(15, 18, tileEntity.getStackInSlot(ScreenContainer.SLOT_ITEM), factor);
         String[] status = tileEntity.getStatus();
-        int currenty = 90;
+        int currenty = 95;
         for (String s : status) {
             if (s != null) {
                 RenderTools.renderText(10, currenty, s, factor, 0xffffffff);

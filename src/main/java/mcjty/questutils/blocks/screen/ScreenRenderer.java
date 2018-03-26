@@ -130,8 +130,6 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
         BlockPos pos = tileEntity.getPos();
 
         RayTraceResult mouseOver = Minecraft.getMinecraft().objectMouseOver;
-//        IClientScreenModule hitModule = null;
-        ScreenTileEntity.ModuleRaytraceResult hit = null;
         IBlockState blockState = getWorld().getBlockState(pos);
         Block block = blockState.getBlock();
         if (block != ModBlocks.screenBlock && block != ModBlocks.screenHitBlock) {
@@ -144,11 +142,11 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
                 double yy = mouseOver.hitVec.y - pos.getY();
                 double zz = mouseOver.hitVec.z - pos.getZ();
                 EnumFacing horizontalFacing = blockState.getValue(ScreenBlock.HORIZONTAL_FACING);
-                hit = tileEntity.getHitModule(xx, yy, zz, mouseOver.sideHit, horizontalFacing);
-                if (hit != null) {
+//                hit = tileEntity.getHitModule(xx, yy, zz, mouseOver.sideHit, horizontalFacing);
+//                if (hit != null) {
 //                    hitModule = modules.get(hit.getModuleIndex());
-                }
-                tileEntity.focusModuleClient(xx, yy, zz, mouseOver.sideHit, horizontalFacing);
+//                }
+//                tileEntity.focusModuleClient(xx, yy, zz, mouseOver.sideHit, horizontalFacing);
             }
         }
 

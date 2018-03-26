@@ -157,7 +157,7 @@ public class ScreenBlock extends QUBlock<ScreenTileEntity, ScreenContainer> {
         if (world.isRemote) {
             RayTraceResult mouseOver = Minecraft.getMinecraft().objectMouseOver;
             ScreenTileEntity screenTileEntity = (ScreenTileEntity) world.getTileEntity(pos);
-            screenTileEntity.hitScreenClient(mouseOver.hitVec.x - pos.getX(), mouseOver.hitVec.y - pos.getY(), mouseOver.hitVec.z - pos.getZ(), mouseOver.sideHit, world.getBlockState(pos).getValue(mcjty.rftools.blocks.screens.ScreenBlock.HORIZONTAL_FACING));
+//            screenTileEntity.hitScreenClient(mouseOver.hitVec.x - pos.getX(), mouseOver.hitVec.y - pos.getY(), mouseOver.hitVec.z - pos.getZ(), mouseOver.sideHit, world.getBlockState(pos).getValue(mcjty.rftools.blocks.screens.ScreenBlock.HORIZONTAL_FACING));
         }
     }
 
@@ -371,16 +371,10 @@ public class ScreenBlock extends QUBlock<ScreenTileEntity, ScreenContainer> {
             return super.openGui(world, x, y, z, player);
         } else {
             if (world.isRemote) {
-                activateOnClient(world, new BlockPos(x, y, z));
+//                activateOnClient(world, new BlockPos(x, y, z));
             }
             return true;
         }
-    }
-
-    private void activateOnClient(World world, BlockPos pos) {
-        RayTraceResult mouseOver = Minecraft.getMinecraft().objectMouseOver;
-        ScreenTileEntity screenTileEntity = (ScreenTileEntity) world.getTileEntity(pos);
-        screenTileEntity.hitScreenClient(mouseOver.hitVec.x - pos.getX(), mouseOver.hitVec.y - pos.getY(), mouseOver.hitVec.z - pos.getZ(), mouseOver.sideHit, world.getBlockState(pos).getValue(mcjty.rftools.blocks.screens.ScreenBlock.HORIZONTAL_FACING));
     }
 
     public static final AxisAlignedBB BLOCK_AABB = new AxisAlignedBB(0.5F - 0.5F, 0.0F, 0.5F - 0.5F, 0.5F + 0.5F, 1.0F, 0.5F + 0.5F);

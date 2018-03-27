@@ -39,10 +39,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.List;
 import java.util.Random;
 
-public class ScreenHitBlock extends GenericBlock<ScreenHitTileEntity, EmptyContainer> {
+public class ScreenHitBlock extends GenericBlock<ScreenHitTE, EmptyContainer> {
 
     public ScreenHitBlock() {
-        super(QuestUtils.instance, Material.GLASS, ScreenHitTileEntity.class, EmptyContainer.class, null, "screen_hitblock", false);
+        super(QuestUtils.instance, Material.GLASS, ScreenHitTE.class, EmptyContainer.class, null, "screen_hitblock", false);
         setBlockUnbreakable();
         setResistance(6000000.0F);
     }
@@ -65,7 +65,7 @@ public class ScreenHitBlock extends GenericBlock<ScreenHitTileEntity, EmptyConta
     public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
         super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
         BlockPos pos = data.getPos();
-        ScreenHitTileEntity screenHitTileEntity = (ScreenHitTileEntity) world.getTileEntity(pos);
+        ScreenHitTE screenHitTileEntity = (ScreenHitTE) world.getTileEntity(pos);
         int dx = screenHitTileEntity.getDx();
         int dy = screenHitTileEntity.getDy();
         int dz = screenHitTileEntity.getDz();
@@ -82,7 +82,7 @@ public class ScreenHitBlock extends GenericBlock<ScreenHitTileEntity, EmptyConta
         super.getWailaBody(itemStack, currenttip, accessor, config);
         BlockPos pos = accessor.getPosition();
         World world = accessor.getWorld();
-        ScreenHitTileEntity screenHitTileEntity = (ScreenHitTileEntity) world.getTileEntity(pos);
+        ScreenHitTE screenHitTileEntity = (ScreenHitTE) world.getTileEntity(pos);
         int dx = screenHitTileEntity.getDx();
         int dy = screenHitTileEntity.getDy();
         int dz = screenHitTileEntity.getDz();
@@ -90,8 +90,8 @@ public class ScreenHitBlock extends GenericBlock<ScreenHitTileEntity, EmptyConta
         Block block = world.getBlockState(rpos).getBlock();
         if (block instanceof ScreenBlock) {
             TileEntity te = world.getTileEntity(rpos);
-            if (te instanceof ScreenTileEntity) {
-                ((ScreenBlock) block).getWailaBodyScreen(currenttip, accessor.getPlayer(), (ScreenTileEntity) te);
+            if (te instanceof ScreenTE) {
+                ((ScreenBlock) block).getWailaBodyScreen(currenttip, accessor.getPlayer(), (ScreenTE) te);
             }
         }
         return currenttip;
@@ -99,18 +99,18 @@ public class ScreenHitBlock extends GenericBlock<ScreenHitTileEntity, EmptyConta
 
     @Override
     public TileEntity createTileEntity(World world, IBlockState state) {
-        return new ScreenHitTileEntity();
+        return new ScreenHitTE();
     }
 
     @Override
     public TileEntity createNewTileEntity(World world, int meta) {
-        return new ScreenHitTileEntity();
+        return new ScreenHitTE();
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public void initModel() {
-        ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(this), 0, ScreenTileEntity.class);
+        ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(this), 0, ScreenTE.class);
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
     }
 
@@ -118,7 +118,7 @@ public class ScreenHitBlock extends GenericBlock<ScreenHitTileEntity, EmptyConta
     @Override
     public void onBlockClicked(World world, BlockPos pos, EntityPlayer playerIn) {
         if (world.isRemote) {
-            ScreenHitTileEntity screenHitTileEntity = (ScreenHitTileEntity) world.getTileEntity(pos);
+            ScreenHitTE screenHitTileEntity = (ScreenHitTE) world.getTileEntity(pos);
             int dx = screenHitTileEntity.getDx();
             int dy = screenHitTileEntity.getDy();
             int dz = screenHitTileEntity.getDz();
@@ -129,7 +129,7 @@ public class ScreenHitBlock extends GenericBlock<ScreenHitTileEntity, EmptyConta
             }
 
             RayTraceResult mouseOver = Minecraft.getMinecraft().objectMouseOver;
-            ScreenTileEntity screenTileEntity = (ScreenTileEntity) world.getTileEntity(pos.add(dx, dy, dz));
+            ScreenTE screenTileEntity = (ScreenTE) world.getTileEntity(pos.add(dx, dy, dz));
 //            screenTileEntity.hitScreenClient(mouseOver.hitVec.x - pos.getX() - dx, mouseOver.hitVec.y - pos.getY() - dy, mouseOver.hitVec.z - pos.getZ() - dz, mouseOver.sideHit, state.getValue(ScreenBlock.HORIZONTAL_FACING));
         }
     }
@@ -149,7 +149,7 @@ public class ScreenHitBlock extends GenericBlock<ScreenHitTileEntity, EmptyConta
     }
 
     public BlockPos getScreenBlockPos(World world, BlockPos pos) {
-        ScreenHitTileEntity screenHitTileEntity = (ScreenHitTileEntity) world.getTileEntity(pos);
+        ScreenHitTE screenHitTileEntity = (ScreenHitTE) world.getTileEntity(pos);
         int dx = screenHitTileEntity.getDx();
         int dy = screenHitTileEntity.getDy();
         int dz = screenHitTileEntity.getDz();

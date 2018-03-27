@@ -15,7 +15,7 @@ import net.minecraft.util.ResourceLocation;
 
 import java.awt.Rectangle;
 
-public class ScreenGui extends GenericGuiContainer<ScreenTileEntity> {
+public class ScreenGui extends GenericGuiContainer<ScreenTE> {
 
     public static final int WIDTH = 183;
     public static final int HEIGHT = 238;
@@ -29,7 +29,7 @@ public class ScreenGui extends GenericGuiContainer<ScreenTileEntity> {
     private static final ResourceLocation iconLocation = new ResourceLocation(QuestUtils.MODID, "textures/gui/screen.png");
     private static final ResourceLocation iconGuiElements = new ResourceLocation(QuestUtils.MODID, "textures/gui/guielements.png");
 
-    public ScreenGui(ScreenTileEntity tileEntity, ScreenContainer container) {
+    public ScreenGui(ScreenTE tileEntity, ScreenContainer container) {
         super(QuestUtils.instance, QuestUtilsMessages.INSTANCE, tileEntity, container, 0, "screen");
 
         xSize = WIDTH;
@@ -88,7 +88,7 @@ public class ScreenGui extends GenericGuiContainer<ScreenTileEntity> {
 
     private void update() {
         tileEntity.setIdentifier(idField.getText());
-        sendServerCommand(QuestUtilsMessages.INSTANCE, ScreenTileEntity.CMD_UPDATE,
+        sendServerCommand(QuestUtilsMessages.INSTANCE, ScreenTE.CMD_UPDATE,
                 new Argument("title", titleField.getText()),
                 new Argument("status0", status0Field.getText()),
                 new Argument("status1", status1Field.getText()),

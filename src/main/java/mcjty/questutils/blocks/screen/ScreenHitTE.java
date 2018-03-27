@@ -4,7 +4,7 @@ import mcjty.lib.entity.GenericTileEntity;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class ScreenHitTileEntity extends GenericTileEntity {
+public class ScreenHitTE extends GenericTileEntity {
 
     private int dx;
     private int dy;

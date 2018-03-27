@@ -16,7 +16,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.Map;
 
-public class ScreenTileEntity extends QUTileEntity implements ITickable, DefaultSidedInventory {
+public class ScreenTE extends QUTileEntity implements ITickable, DefaultSidedInventory {
 
     public static final String CMD_CLICK = "click";
     public static final String CMD_HOVER = "hover";
@@ -41,7 +41,7 @@ public class ScreenTileEntity extends QUTileEntity implements ITickable, Default
     public static final int SIZE_ENOURMOUS = 3;
     public static final int SIZE_GIGANTIC = 4;
 
-    public ScreenTileEntity() {
+    public ScreenTE() {
     }
 
     @Override
@@ -65,6 +65,16 @@ public class ScreenTileEntity extends QUTileEntity implements ITickable, Default
         } else {
             checkStateServer();
         }
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+        markDirtyClient();
+    }
+
+    public void setStatus(int idx, String status) {
+        this.status[idx] = status;
+        markDirtyClient();
     }
 
     public String getTitle() {

@@ -22,17 +22,17 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
-public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> {
+public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTE> {
 
     private static final ResourceLocation TEXTURE = new ResourceLocation(QuestUtils.MODID, "textures/blocks/screenframe.png");
-    private final ModelScreen screenModel = new ModelScreen(ScreenTileEntity.SIZE_NORMAL);
-    private final ModelScreen screenModelLarge = new ModelScreen(ScreenTileEntity.SIZE_LARGE);
-    private final ModelScreen screenModelHuge = new ModelScreen(ScreenTileEntity.SIZE_HUGE);
-    private final ModelScreen screenModelEnourmous = new ModelScreen(ScreenTileEntity.SIZE_ENOURMOUS);
-    private final ModelScreen screenModelGigantic = new ModelScreen(ScreenTileEntity.SIZE_GIGANTIC);
+    private final ScreenModel screenModel = new ScreenModel(ScreenTE.SIZE_NORMAL);
+    private final ScreenModel screenModelLarge = new ScreenModel(ScreenTE.SIZE_LARGE);
+    private final ScreenModel screenModelHuge = new ScreenModel(ScreenTE.SIZE_HUGE);
+    private final ScreenModel screenModelEnourmous = new ScreenModel(ScreenTE.SIZE_ENOURMOUS);
+    private final ScreenModel screenModelGigantic = new ScreenModel(ScreenTE.SIZE_GIGANTIC);
 
     @Override
-    public void render(ScreenTileEntity tileEntity, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+    public void render(ScreenTE tileEntity, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
         float xRotation = 0.0F;
         float yRotation = 0.0F;
 
@@ -122,7 +122,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
 
 //    private ClientScreenModuleHelper clientScreenModuleHelper = new ClientScreenModuleHelper();
 
-    private void renderModules(FontRenderer fontrenderer, ScreenTileEntity tileEntity, int size) {
+    private void renderModules(FontRenderer fontrenderer, ScreenTE tileEntity, int size) {
         float f3;
         float factor = size + 1.0f;
         int moduleIndex = 0;
@@ -179,13 +179,13 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
         this.bindTexture(TEXTURE);
         GlStateManager.pushMatrix();
         GlStateManager.scale(1, -1, -1);
-        if (size == ScreenTileEntity.SIZE_GIGANTIC) {
+        if (size == ScreenTE.SIZE_GIGANTIC) {
             this.screenModelGigantic.render();
-        } else if (size == ScreenTileEntity.SIZE_ENOURMOUS) {
+        } else if (size == ScreenTE.SIZE_ENOURMOUS) {
             this.screenModelEnourmous.render();
-        } else if (size == ScreenTileEntity.SIZE_HUGE) {
+        } else if (size == ScreenTE.SIZE_HUGE) {
             this.screenModelHuge.render();
-        } else if (size == ScreenTileEntity.SIZE_LARGE) {
+        } else if (size == ScreenTE.SIZE_LARGE) {
             this.screenModelLarge.render();
         } else {
             this.screenModel.render();

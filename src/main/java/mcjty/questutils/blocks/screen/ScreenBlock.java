@@ -41,12 +41,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.Collections;
 import java.util.List;
 
-public class ScreenBlock extends QUBlock<ScreenTileEntity, ScreenContainer> {
+public class ScreenBlock extends QUBlock<ScreenTE, ScreenContainer> {
 
     public static final PropertyDirection HORIZONTAL_FACING = PropertyDirection.create("horizontal_facing", EnumFacing.Plane.HORIZONTAL);
 
     public ScreenBlock() {
-        super(ScreenTileEntity.class, ScreenContainer.class, "screen");
+        super(ScreenTE.class, ScreenContainer.class, "screen");
     }
 
     @Override
@@ -121,8 +121,8 @@ public class ScreenBlock extends QUBlock<ScreenTileEntity, ScreenContainer> {
     public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
         super.getWailaBody(itemStack, currenttip, accessor, config);
         TileEntity te = accessor.getTileEntity();
-        if (te instanceof ScreenTileEntity) {
-            return getWailaBodyScreen(currenttip, accessor.getPlayer(), (ScreenTileEntity) te);
+        if (te instanceof ScreenTE) {
+            return getWailaBodyScreen(currenttip, accessor.getPlayer(), (ScreenTE) te);
         } else {
             return Collections.emptyList();
         }
@@ -130,7 +130,7 @@ public class ScreenBlock extends QUBlock<ScreenTileEntity, ScreenContainer> {
 
     @SideOnly(Side.CLIENT)
     @Optional.Method(modid = "waila")
-    public List<String> getWailaBodyScreen(List<String> currenttip, EntityPlayer player, ScreenTileEntity te) {
+    public List<String> getWailaBodyScreen(List<String> currenttip, EntityPlayer player, ScreenTE te) {
         if (System.currentTimeMillis() - lastTime > 500) {
             lastTime = System.currentTimeMillis();
 //            RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new ScreenInfoPacketServer(te.getWorld().provider.getDimension(),
@@ -143,8 +143,8 @@ public class ScreenBlock extends QUBlock<ScreenTileEntity, ScreenContainer> {
     @SideOnly(Side.CLIENT)
     @Override
     public void initModel() {
-        ClientRegistry.bindTileEntitySpecialRenderer(ScreenTileEntity.class, new ScreenRenderer());
-        ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(this), 0, ScreenTileEntity.class);
+        ClientRegistry.bindTileEntitySpecialRenderer(ScreenTE.class, new ScreenRenderer());
+        ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(this), 0, ScreenTE.class);
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
     }
 
@@ -156,7 +156,7 @@ public class ScreenBlock extends QUBlock<ScreenTileEntity, ScreenContainer> {
     public void onBlockClicked(World world, BlockPos pos, EntityPlayer playerIn) {
         if (world.isRemote) {
             RayTraceResult mouseOver = Minecraft.getMinecraft().objectMouseOver;
-            ScreenTileEntity screenTileEntity = (ScreenTileEntity) world.getTileEntity(pos);
+            ScreenTE screenTileEntity = (ScreenTE) world.getTileEntity(pos);
 //            screenTileEntity.hitScreenClient(mouseOver.hitVec.x - pos.getX(), mouseOver.hitVec.y - pos.getY(), mouseOver.hitVec.z - pos.getZ(), mouseOver.sideHit, world.getBlockState(pos).getValue(mcjty.rftools.blocks.screens.ScreenBlock.HORIZONTAL_FACING));
         }
     }
@@ -171,7 +171,7 @@ public class ScreenBlock extends QUBlock<ScreenTileEntity, ScreenContainer> {
         BlockPos posO = new BlockPos(xx, yy, zz);
         if (world.isAirBlock(posO)) {
             world.setBlockState(posO, ModBlocks.screenHitBlock.getDefaultState().withProperty(BaseBlock.FACING, facing), 3);
-            ScreenHitTileEntity screenHitTileEntity = (ScreenHitTileEntity) world.getTileEntity(posO);
+            ScreenHitTE screenHitTileEntity = (ScreenHitTE) world.getTileEntity(posO);
             screenHitTileEntity.setRelativeLocation(-dx, -dy, -dz);
         }
     }
@@ -286,16 +286,16 @@ public class ScreenBlock extends QUBlock<ScreenTileEntity, ScreenContainer> {
     }
 
     private static Setup transitions[] = new Setup[] {
-            new Setup(ScreenTileEntity.SIZE_NORMAL, false),
-            new Setup(ScreenTileEntity.SIZE_NORMAL, true),
-            new Setup(ScreenTileEntity.SIZE_LARGE, false),
-            new Setup(ScreenTileEntity.SIZE_LARGE, true),
-            new Setup(ScreenTileEntity.SIZE_HUGE, false),
-            new Setup(ScreenTileEntity.SIZE_HUGE, true),
-            new Setup(ScreenTileEntity.SIZE_ENOURMOUS, false),
-            new Setup(ScreenTileEntity.SIZE_ENOURMOUS, true),
-            new Setup(ScreenTileEntity.SIZE_GIGANTIC, false),
-            new Setup(ScreenTileEntity.SIZE_GIGANTIC, true),
+            new Setup(ScreenTE.SIZE_NORMAL, false),
+            new Setup(ScreenTE.SIZE_NORMAL, true),
+            new Setup(ScreenTE.SIZE_LARGE, false),
+            new Setup(ScreenTE.SIZE_LARGE, true),
+            new Setup(ScreenTE.SIZE_HUGE, false),
+            new Setup(ScreenTE.SIZE_HUGE, true),
+            new Setup(ScreenTE.SIZE_ENOURMOUS, false),
+            new Setup(ScreenTE.SIZE_ENOURMOUS, true),
+            new Setup(ScreenTE.SIZE_GIGANTIC, false),
+            new Setup(ScreenTE.SIZE_GIGANTIC, true),
     };
 
     @Override
@@ -305,7 +305,7 @@ public class ScreenBlock extends QUBlock<ScreenTileEntity, ScreenContainer> {
     }
 
     public void cycleSizeTranspMode(World world, BlockPos pos) {
-        ScreenTileEntity screenTileEntity = (ScreenTileEntity) world.getTileEntity(pos);
+        ScreenTE screenTileEntity = (ScreenTE) world.getTileEntity(pos);
         IBlockState state = world.getBlockState(pos);
         clearInvisibleBlocks(world, pos, state, screenTileEntity.getSize());
         for (int i = 0 ; i < transitions.length ; i++) {
@@ -321,7 +321,7 @@ public class ScreenBlock extends QUBlock<ScreenTileEntity, ScreenContainer> {
     }
 
     public void cycleSizeMode(World world, BlockPos pos) {
-        ScreenTileEntity screenTileEntity = (ScreenTileEntity) world.getTileEntity(pos);
+        ScreenTE screenTileEntity = (ScreenTE) world.getTileEntity(pos);
         IBlockState state = world.getBlockState(pos);
         clearInvisibleBlocks(world, pos, state, screenTileEntity.getSize());
         for (int i = 0 ; i < transitions.length ; i++) {
@@ -337,7 +337,7 @@ public class ScreenBlock extends QUBlock<ScreenTileEntity, ScreenContainer> {
     }
 
     public void cycleTranspMode(World world, BlockPos pos) {
-        ScreenTileEntity screenTileEntity = (ScreenTileEntity) world.getTileEntity(pos);
+        ScreenTE screenTileEntity = (ScreenTE) world.getTileEntity(pos);
         IBlockState state = world.getBlockState(pos);
         clearInvisibleBlocks(world, pos, state, screenTileEntity.getSize());
         for (int i = 0 ; i < transitions.length ; i++) {
@@ -363,7 +363,7 @@ public class ScreenBlock extends QUBlock<ScreenTileEntity, ScreenContainer> {
                 damage = 15;
             }
             int color = ItemDye.DYE_COLORS[damage];
-            ScreenTileEntity screenTileEntity = (ScreenTileEntity) world.getTileEntity(new BlockPos(x, y, z));
+            ScreenTE screenTileEntity = (ScreenTE) world.getTileEntity(new BlockPos(x, y, z));
             screenTileEntity.setColor(color);
             return true;
         }
@@ -458,9 +458,9 @@ public class ScreenBlock extends QUBlock<ScreenTileEntity, ScreenContainer> {
         super.onBlockPlacedBy(world, pos, state, entityLivingBase, itemStack);
 
         TileEntity tileEntity = world.getTileEntity(pos);
-        if (tileEntity instanceof ScreenTileEntity) {
-            ScreenTileEntity screenTileEntity = (ScreenTileEntity) tileEntity;
-            if (screenTileEntity.getSize() > ScreenTileEntity.SIZE_NORMAL) {
+        if (tileEntity instanceof ScreenTE) {
+            ScreenTE screenTileEntity = (ScreenTE) tileEntity;
+            if (screenTileEntity.getSize() > ScreenTE.SIZE_NORMAL) {
                 setInvisibleBlocks(world, pos, screenTileEntity.getSize());
             }
         }
@@ -470,9 +470,9 @@ public class ScreenBlock extends QUBlock<ScreenTileEntity, ScreenContainer> {
     @Override
     public void breakBlock(World world, BlockPos pos, IBlockState state) {
         TileEntity te = world.getTileEntity(pos);
-        if (te instanceof ScreenTileEntity) {
-            ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
-            if (screenTileEntity.getSize() > ScreenTileEntity.SIZE_NORMAL) {
+        if (te instanceof ScreenTE) {
+            ScreenTE screenTileEntity = (ScreenTE) te;
+            if (screenTileEntity.getSize() > ScreenTE.SIZE_NORMAL) {
                 clearInvisibleBlocks(world, pos, state, screenTileEntity.getSize());
             }
         }

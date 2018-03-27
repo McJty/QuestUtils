@@ -4,11 +4,13 @@ package mcjty.questutils;
 import mcjty.lib.base.ModBase;
 import mcjty.questutils.commands.CmdQU;
 import mcjty.questutils.data.QUData;
+import mcjty.questutils.integration.computers.OpenComputersIntegration;
 import mcjty.questutils.proxy.CommonProxy;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.*;
@@ -52,6 +54,9 @@ public class QuestUtils implements ModBase {
     @Mod.EventHandler
     public void init(FMLInitializationEvent e) {
         proxy.init(e);
+        if (Loader.isModLoaded("opencomputers")) {
+            OpenComputersIntegration.init();
+        }
     }
 
     @Mod.EventHandler

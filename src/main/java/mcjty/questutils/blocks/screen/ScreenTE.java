@@ -1,15 +1,20 @@
 package mcjty.questutils.blocks.screen;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.network.Argument;
 import mcjty.questutils.blocks.QUTileEntity;
+import mcjty.questutils.json.JsonTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -20,18 +25,20 @@ public class ScreenTE extends QUTileEntity implements ITickable, DefaultSidedInv
 
     public static final String CMD_CLICK = "click";
     public static final String CMD_HOVER = "hover";
-    public static final String CMD_SETBRIGHT = "setBright";
     public static final String CMD_SETTRUETYPE = "setTruetype";
     public static final String CMD_UPDATE = "cmdUpdate";
+    public static final String CMD_UPDATE_STRING = "cmdUpdateString";
 
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, ScreenContainer.factory, 1);
-    private String title;
-    private String[] status = new String[3];
+    private InventoryHelper inventoryHelper = new InventoryHelper(this, ScreenContainer.factory, 9);
+    private FormattedString title;
+    private FormattedString[] status = new FormattedString[3];
+    private ResourceLocation icon;
+    private String filename;
 
     private int size = 0;                   // Size of screen (0 is normal, 1 is large, 2 is huge)
     private boolean transparent = false;    // Transparent screen.
     private int color = 0;                  // Color of the screen.
-    private boolean bright = false;         // True if the screen contents is full bright
+    private int borderColor = EnumDyeColor.BROWN.getColorValue();
 
     private int trueTypeMode = 0;           // 0 is default, -1 is disabled, 1 is truetype
 
@@ -40,6 +47,36 @@ public class ScreenTE extends QUTileEntity implements ITickable, DefaultSidedInv
     public static final int SIZE_HUGE = 2;
     public static final int SIZE_ENOURMOUS = 3;
     public static final int SIZE_GIGANTIC = 4;
+
+    public static class FormattedString {
+        private final String text;
+        private final Alignment alignment;
+        private final int color;
+
+        public FormattedString(String text, Alignment alignment, int color) {
+            this.text = text;
+            this.alignment = alignment;
+            this.color = color;
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public Alignment getAlignment() {
+            return alignment;
+        }
+
+        public int getColor() {
+            return color;
+        }
+    }
+
+    public static enum Alignment {
+        LEFT,
+        CENTER,
+        RIGHT
+    }
 
     public ScreenTE() {
     }
@@ -67,21 +104,35 @@ public class ScreenTE extends QUTileEntity implements ITickable, DefaultSidedInv
         }
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public ResourceLocation getIcon() {
+        return icon;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setIcon(ResourceLocation icon, String filename) {
+        this.icon = icon;
+        this.filename = ((filename == null) || filename.trim().isEmpty()) ? null : filename;
         markDirtyClient();
     }
 
-    public void setStatus(int idx, String status) {
-        this.status[idx] = status;
+    public void setTitle(String title, Alignment alignment, int color) {
+        this.title = ((title == null) || title.trim().isEmpty()) ? null : new FormattedString(title, alignment, color);
         markDirtyClient();
     }
 
-    public String getTitle() {
+    public void setStatus(int idx, String status, Alignment alignment, int color) {
+        this.status[idx] = ((status == null) || status.trim().isEmpty()) ? null : new FormattedString(status, alignment, color);
+        markDirtyClient();
+    }
+
+    public FormattedString getTitle() {
         return title;
     }
 
-    public String[] getStatus() {
+    public FormattedString[] getStatus() {
         return status;
     }
 
@@ -116,9 +167,6 @@ public class ScreenTE extends QUTileEntity implements ITickable, DefaultSidedInv
         return inventoryHelper.getStackInSlot(index);
     }
 
-
-
-
     @Override
     public InventoryHelper getInventoryHelper() {
         return inventoryHelper;
@@ -126,7 +174,7 @@ public class ScreenTE extends QUTileEntity implements ITickable, DefaultSidedInv
 
     @Override
     public int getInventoryStackLimit() {
-        return 1;
+        return 64;
     }
 
     @Override
@@ -151,12 +199,18 @@ public class ScreenTE extends QUTileEntity implements ITickable, DefaultSidedInv
         size = tagCompound.getInteger("size");
         transparent = tagCompound.getBoolean("transparent");
         color = tagCompound.getInteger("color");
-        bright = tagCompound.getBoolean("bright");
+        borderColor = tagCompound.getInteger("borderColor");
         trueTypeMode = tagCompound.getInteger("truetype");
-        title = tagCompound.getString("title");
-        status[0] = tagCompound.getString("status0");
-        status[1] = tagCompound.getString("status1");
-        status[2] = tagCompound.getString("status2");
+        title = getFormattedStringFromNBT(tagCompound, "title");
+        status[0] = getFormattedStringFromNBT(tagCompound, "stat0");
+        status[1] = getFormattedStringFromNBT(tagCompound, "stat1");
+        status[2] = getFormattedStringFromNBT(tagCompound, "stat2");
+        String iconString = tagCompound.getString("icon");
+        if (iconString.trim().isEmpty()) {
+            icon = null;
+        } else {
+            icon = new ResourceLocation(iconString);
+        }
     }
 
     @Override
@@ -172,20 +226,42 @@ public class ScreenTE extends QUTileEntity implements ITickable, DefaultSidedInv
         tagCompound.setInteger("size", size);
         tagCompound.setBoolean("transparent", transparent);
         tagCompound.setInteger("color", color);
-        tagCompound.setBoolean("bright", bright);
+        tagCompound.setInteger("borderColor", borderColor);
         tagCompound.setInteger("truetype", trueTypeMode);
-        if (title != null) {
-            tagCompound.setString("title", title);
+        writeFormattedStringToNBT(tagCompound, "title", title);
+        writeFormattedStringToNBT(tagCompound, "stat0", status[0]);
+        writeFormattedStringToNBT(tagCompound, "stat1", status[1]);
+        writeFormattedStringToNBT(tagCompound, "stat2", status[2]);
+        if (icon != null) {
+            tagCompound.setString("icon", icon.toString());
         }
-        if (status[0] != null) {
-            tagCompound.setString("status0", status[0]);
+    }
+
+    private FormattedString getFormattedStringFromNBT(NBTTagCompound tagCompound, String prefix) {
+        if (tagCompound.hasKey(prefix)) {
+            return new FormattedString(tagCompound.getString(prefix),
+                    Alignment.values()[tagCompound.getByte(prefix + "A")],
+                    tagCompound.getInteger(prefix + "C"));
+        } else {
+            return null;
         }
-        if (status[1] != null) {
-            tagCompound.setString("status1", status[1]);
+    }
+
+    private void writeFormattedStringToNBT(NBTTagCompound tagCompound, String prefix, FormattedString string) {
+        if (string != null) {
+            tagCompound.setString(prefix, string.getText());
+            tagCompound.setByte(prefix+"A", (byte) string.getAlignment().ordinal());
+            tagCompound.setInteger(prefix+"C", string.getColor());
         }
-        if (status[2] != null) {
-            tagCompound.setString("status2", status[2]);
-        }
+    }
+
+    public int getBorderColor() {
+        return borderColor;
+    }
+
+    public void setBorderColor(int borderColor) {
+        this.borderColor = borderColor;
+        markDirtyClient();
     }
 
     public int getColor() {
@@ -199,15 +275,6 @@ public class ScreenTE extends QUTileEntity implements ITickable, DefaultSidedInv
 
     public void setSize(int size) {
         this.size = size;
-        markDirtyClient();
-    }
-
-    public boolean isBright() {
-        return bright;
-    }
-
-    public void setBright(boolean bright) {
-        this.bright = bright;
         markDirtyClient();
     }
 
@@ -240,10 +307,27 @@ public class ScreenTE extends QUTileEntity implements ITickable, DefaultSidedInv
             return true;
         }
         if (CMD_UPDATE.equals(command)) {
-            title = args.get("title").getString();
-            status[0] = args.get("status0").getString();
-            status[1] = args.get("status1").getString();
-            status[2] = args.get("status2").getString();
+            Integer color = args.get("color").getInteger();
+            setBorderColor(color);
+            String iconString = args.get("icon").getString();
+            String fileName = args.get("file").getString();
+            setIcon(iconString.trim().isEmpty() ? null : new ResourceLocation(iconString),
+                    fileName.trim().isEmpty() ? null : fileName);
+            markDirtyClient();
+            return true;
+        } else if (CMD_UPDATE_STRING.equals(command)) {
+            if (args.containsKey("title")) {
+                setTitle(args.get("title").getString(), Alignment.values()[args.get("titleA").getInteger()], args.get("titleC").getInteger());
+            }
+            if (args.containsKey("status0")) {
+                setStatus(0, args.get("status0").getString(), Alignment.values()[args.get("status0A").getInteger()], args.get("status0C").getInteger());
+            }
+            if (args.containsKey("status1")) {
+                setStatus(1, args.get("status1").getString(), Alignment.values()[args.get("status1A").getInteger()], args.get("status1C").getInteger());
+            }
+            if (args.containsKey("status2")) {
+                setStatus(2, args.get("status2").getString(), Alignment.values()[args.get("status2A").getInteger()], args.get("status2C").getInteger());
+            }
             markDirtyClient();
             return true;
         } else if (CMD_CLICK.equals(command)) {
@@ -253,15 +337,77 @@ public class ScreenTE extends QUTileEntity implements ITickable, DefaultSidedInv
             return true;
         } else if (CMD_HOVER.equals(command)) {
             return true;
-        } else if (CMD_SETBRIGHT.equals(command)) {
-            boolean b = args.get("b").getBoolean();
-            setBright(b);
-            return true;
         } else if (CMD_SETTRUETYPE.equals(command)) {
             int b = args.get("b").getInteger();
             setTrueTypeMode(b);
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void writeToJson(JsonObject object) {
+        super.writeToJson(object);
+        if (hasIdentifier()) {
+            object.add("color", new JsonPrimitive(color));
+            object.add("borderColor", new JsonPrimitive(borderColor));
+            if (title != null) {
+                object.add("title", writeFormattedStringToJson(title));
+            }
+            if (status[0] != null) {
+                object.add("status0", writeFormattedStringToJson(status[0]));
+            }
+            if (status[1] != null) {
+                object.add("status1", writeFormattedStringToJson(status[1]));
+            }
+            if (status[2] != null) {
+                object.add("status2", writeFormattedStringToJson(status[2]));
+            }
+            if (icon != null) {
+                object.add("icon", new JsonPrimitive(icon.toString()));
+            }
+            object.add("items", JsonTools.writeItemsToJson(getInventoryHelper(), ScreenContainer.SLOT_ITEM, ScreenContainer.SLOT_ITEM+9));
+        }
+    }
+
+    @Override
+    public void readFromJson(JsonObject object) {
+        super.readFromJson(object);
+        if (object.has("color")) {
+            color = object.get("color").getAsInt();
+        }
+        if (object.has("borderColor")) {
+            borderColor = object.get("borderColor").getAsInt();
+        }
+        title = getFormattedStringFromJson(object, "title");
+        status[0] = getFormattedStringFromJson(object, "status0");
+        status[1] = getFormattedStringFromJson(object, "status1");
+        status[2] = getFormattedStringFromJson(object, "status2");
+        if (object.has("icon")) {
+            icon = new ResourceLocation(object.get("icon").getAsString());
+        }
+        if (object.has("items")) {
+            JsonTools.readItemsFromJson(object.getAsJsonArray("items"), getInventoryHelper(), ScreenContainer.SLOT_ITEM, ScreenContainer.SLOT_ITEM + 9);
+        }
+        markDirtyClient();
+    }
+
+    private JsonObject writeFormattedStringToJson(FormattedString str) {
+        JsonObject obj = new JsonObject();
+        obj.add("text", new JsonPrimitive(str.getText()));
+        obj.add("alignment", new JsonPrimitive(str.getAlignment().ordinal()));
+        obj.add("color", new JsonPrimitive(str.getColor()));
+        return obj;
+    }
+
+    private FormattedString getFormattedStringFromJson(JsonObject obj, String tag) {
+        if (obj.has(tag)) {
+            JsonObject object = obj.get("tag").getAsJsonObject();
+            return new FormattedString(object.get("text").getAsString(),
+                    Alignment.values()[object.get("alignment").getAsInt()],
+                    object.get("color").getAsInt());
+        } else {
+            return null;
+        }
     }
 }

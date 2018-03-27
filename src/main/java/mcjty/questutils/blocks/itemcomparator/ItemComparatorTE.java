@@ -1,11 +1,9 @@
 package mcjty.questutils.blocks.itemcomparator;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
-import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.questutils.blocks.QUTileEntity;
@@ -14,7 +12,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
 import java.util.Map;
@@ -208,15 +205,7 @@ public class ItemComparatorTE extends QUTileEntity implements DefaultSidedInvent
     public void writeToJson(JsonObject object) {
         super.writeToJson(object);
         if (hasIdentifier()) {
-            JsonArray array = new JsonArray();
-            for (int i = 0 ; i < 16 ; i++) {
-                ItemStack stack = getStackInSlot(i);
-                if (!stack.isEmpty()) {
-                    JsonObject itemJson = JsonTools.itemStackToJson(stack);
-                    array.add(itemJson);
-                }
-            }
-            object.add("filter", array);
+            object.add("filter", JsonTools.writeItemsToJson(getInventoryHelper(), 0, 16));
         }
     }
 
@@ -224,14 +213,7 @@ public class ItemComparatorTE extends QUTileEntity implements DefaultSidedInvent
     public void readFromJson(JsonObject object) {
         super.readFromJson(object);
         if (object.has("filter")) {
-            for (int i = 0 ; i < 16 ; i++) {
-                setInventorySlotContents(i, ItemStack.EMPTY);
-            }
-            int idx = 0;
-            JsonArray array = object.getAsJsonArray("filter");
-            for (JsonElement element : array) {
-                setInventorySlotContents(idx++, JsonTools.jsonToItemStack(element.getAsJsonObject()));
-            }
+            JsonTools.readItemsFromJson(object.getAsJsonArray("filter"), getInventoryHelper(), 0, 16);
             detect();
         }
     }

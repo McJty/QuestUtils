@@ -1,7 +1,10 @@
 package mcjty.questutils.json;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import mcjty.lib.container.InventoryHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
@@ -52,6 +55,25 @@ public class JsonTools {
         return stack;
     }
 
+    public static JsonArray writeItemsToJson(InventoryHelper helper, int start, int end) {
+        JsonArray array = new JsonArray();
+        for (int i = start ; i < end ; i++) {
+            ItemStack stack = helper.getStackInSlot(i);
+            if (!stack.isEmpty()) {
+                JsonObject itemJson = JsonTools.itemStackToJson(stack);
+                array.add(itemJson);
+            }
+        }
+        return array;
+    }
 
-
+    public static void readItemsFromJson(JsonArray array, InventoryHelper helper, int start, int end) {
+        for (int i = start ; i < end ; i++) {
+            helper.setStackInSlot(i, ItemStack.EMPTY);
+        }
+        int idx = start;
+        for (JsonElement element : array) {
+            helper.setStackInSlot(idx++, JsonTools.jsonToItemStack(element.getAsJsonObject()));
+        }
+    }
 }

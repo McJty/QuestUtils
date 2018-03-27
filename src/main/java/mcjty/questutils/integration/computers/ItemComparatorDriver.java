@@ -23,8 +23,13 @@ public class ItemComparatorDriver {
                 super(tile, "questutils_item_comparator");
             }
 
+            @Callback(doc = "function():string; Return the identifier of this block")
+            public Object[] getIdentifier(Context c, Arguments a) {
+                return new Object[]{tile.getIdentifier()};
+            }
+
             @Callback(doc = "function():boolean; Return true if the buffer matches the filter")
-            public Object[] getMatches(Context c, Arguments a) {
+            public Object[] matches(Context c, Arguments a) {
                 return new Object[]{tile.isPowered()};
             }
 

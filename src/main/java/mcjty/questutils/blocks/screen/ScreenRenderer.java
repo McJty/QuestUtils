@@ -3,6 +3,9 @@ package mcjty.questutils.blocks.screen;
 import mcjty.lib.container.BaseBlock;
 import mcjty.questutils.QuestUtils;
 import mcjty.questutils.blocks.ModBlocks;
+import mcjty.questutils.config.GeneralConfiguration;
+import mcjty.questutils.proxy.CommonProxy;
+import mcjty.questutils.rendering.ImageLoader;
 import mcjty.questutils.rendering.RenderTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -13,6 +16,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -20,6 +24,8 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
+
+import java.io.File;
 
 @SideOnly(Side.CLIENT)
 public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTE> {
@@ -85,16 +91,9 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTE> {
         if (tileEntity != null) {
             FontRenderer fontrenderer = this.getFontRenderer();
 
-//            IClientScreenModule.TransformMode mode = IClientScreenModule.TransformMode.NONE;
             GlStateManager.depthMask(false);
             GlStateManager.disableLighting();
 
-//            Map<Integer, IModuleData> screenData = updateScreenData(tileEntity);
-
-//            List<IClientScreenModule> modules = tileEntity.getClientScreenModules();
-//            if (tileEntity.isShowHelp()) {
-//                modules = ScreenTileEntity.getHelpingScreenModules();
-//            }
             renderModules(fontrenderer, tileEntity, tileEntity.getSize());
         }
 
@@ -103,24 +102,6 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTE> {
 
         GlStateManager.popMatrix();
     }
-
-//    private Map<Integer, IModuleData> updateScreenData(ScreenTileEntity screenTileEntity) {
-//        long millis = System.currentTimeMillis();
-//        if ((millis - screenTileEntity.lastTime > 500) && screenTileEntity.isNeedsServerData()) {
-//            screenTileEntity.lastTime = millis;
-//            GlobalCoordinate pos = new GlobalCoordinate(screenTileEntity.getPos(), screenTileEntity.getWorld().provider.getDimension());
-//            RFToolsMessages.INSTANCE.sendToServer(new PacketGetScreenData(RFTools.MODID, pos, millis));
-//        }
-//
-//        GlobalCoordinate key = new GlobalCoordinate(screenTileEntity.getPos(), screenTileEntity.getWorld().provider.getDimension());
-//        Map<Integer,IModuleData> screenData = ScreenTileEntity.screenData.get(key);
-//        if (screenData == null) {
-//            screenData = Collections.emptyMap();
-//        }
-//        return screenData;
-//    }
-
-//    private ClientScreenModuleHelper clientScreenModuleHelper = new ClientScreenModuleHelper();
 
     private void renderModules(FontRenderer fontrenderer, ScreenTE tileEntity, int size) {
         float f3;
@@ -150,28 +131,109 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTE> {
             }
         }
 
-        if (tileEntity.isBright()) {
+        if (GeneralConfiguration.BRIGHT_SCREENS) {
             Minecraft.getMinecraft().entityRenderer.disableLightmap();
         }
 
-        if (tileEntity.getTitle() != null) {
-            int width = Minecraft.getMinecraft().fontRenderer.getStringWidth(tileEntity.getTitle()) * 2;
-            int textx = 2;
-            textx += (128-width) / 4;
-            RenderTools.renderText(textx, 8, tileEntity.getTitle(), factor*2, 0xffffff00);
+        renderTitle(tileEntity, factor);
+        renderObjective(tileEntity, factor);
+        renderStatus(tileEntity, factor);
+
+        if (GeneralConfiguration.BRIGHT_SCREENS) {
+            Minecraft.getMinecraft().entityRenderer.enableLightmap();
         }
-        RenderTools.renderItem(15, 18, tileEntity.getStackInSlot(ScreenContainer.SLOT_ITEM), factor);
-        String[] status = tileEntity.getStatus();
-        int currenty = 95;
-        for (String s : status) {
-            if (s != null) {
-                RenderTools.renderText(10, currenty, s, factor, 0xffffffff);
-                currenty += 10;
+    }
+
+    private void renderTitle(ScreenTE tileEntity, float factor) {
+        if (tileEntity.getTitle() != null) {
+            String txt = tileEntity.getTitle().getText();
+            int width = Minecraft.getMinecraft().fontRenderer.getStringWidth(txt);
+            int textx = 4;
+            switch (tileEntity.getTitle().getAlignment()) {
+                case LEFT:
+                    break;
+                case CENTER:
+                    textx += (60-width) / 2;
+                    break;
+                case RIGHT:
+                    textx += (60-width);
+                    break;
+            }
+            RenderTools.renderText(textx, 8, txt, factor*2, tileEntity.getTitle().getColor());
+        }
+    }
+
+    private static final ItemStack[] STACKS = new ItemStack[9];
+
+    private void renderObjective(ScreenTE tileEntity, float factor) {
+        ResourceLocation icon = tileEntity.getIcon();
+        if (icon != null) {
+            String filename = tileEntity.getFilename();
+            if (filename != null && !filename.trim().isEmpty()) {
+                File file;
+                if (filename.startsWith("$")) {
+                    file = new File(CommonProxy.modConfigDir.getPath() + File.separator + filename.substring(1));
+                } else {
+                    file = new File(filename);
+                }
+
+                ImageLoader.loadAndBind(icon, file);
+            }
+            RenderTools.renderIcon(15, 18, icon, factor, tileEntity.getBorderColor());
+        } else {
+            int cnt = 0;
+            for (int i = 0 ; i < 9 ; i++) {
+                if (!tileEntity.getStackInSlot(ScreenContainer.SLOT_ITEM+i).isEmpty()) {
+                    STACKS[cnt++] = tileEntity.getStackInSlot(i);
+                }
+            }
+            for (int i = cnt ; i < 9 ; i++) {
+                STACKS[i] = ItemStack.EMPTY;
+            }
+
+            if (cnt <= 1) {
+                RenderTools.renderItem(15, 18, STACKS[0], factor, tileEntity.getBorderColor());
+            } else if (cnt <= 4) {
+                float v = 0.5f;
+                RenderTools.renderItem(25, 29, STACKS[0], factor * v, tileEntity.getBorderColor());
+                RenderTools.renderItem(45, 29, STACKS[1], factor * v, tileEntity.getBorderColor());
+                RenderTools.renderItem(25, 49, STACKS[2], factor * v, tileEntity.getBorderColor());
+                RenderTools.renderItem(45, 49, STACKS[3], factor * v, tileEntity.getBorderColor());
+            } else {
+                float v = 0.3f;
+                RenderTools.renderItem(43, 47, STACKS[0], factor * v, tileEntity.getBorderColor());
+                RenderTools.renderItem(63, 47, STACKS[1], factor * v, tileEntity.getBorderColor());
+                RenderTools.renderItem(83, 47, STACKS[2], factor * v, tileEntity.getBorderColor());
+                RenderTools.renderItem(43, 67, STACKS[3], factor * v, tileEntity.getBorderColor());
+                RenderTools.renderItem(63, 67, STACKS[4], factor * v, tileEntity.getBorderColor());
+                RenderTools.renderItem(83, 67, STACKS[5], factor * v, tileEntity.getBorderColor());
+                RenderTools.renderItem(43, 87, STACKS[6], factor * v, tileEntity.getBorderColor());
+                RenderTools.renderItem(63, 87, STACKS[7], factor * v, tileEntity.getBorderColor());
+                RenderTools.renderItem(83, 87, STACKS[8], factor * v, tileEntity.getBorderColor());
             }
         }
+    }
 
-        if (tileEntity.isBright()) {
-            Minecraft.getMinecraft().entityRenderer.enableLightmap();
+    private void renderStatus(ScreenTE tileEntity, float factor) {
+        ScreenTE.FormattedString[] status = tileEntity.getStatus();
+        int currenty = 95;
+        for (ScreenTE.FormattedString s : status) {
+            if (s != null) {
+                int width = Minecraft.getMinecraft().fontRenderer.getStringWidth(s.getText());
+                int textx = 10;
+                switch (s.getAlignment()) {
+                    case LEFT:
+                        break;
+                    case CENTER:
+                        textx += (116-width) / 2;
+                        break;
+                    case RIGHT:
+                        textx += (116-width);
+                        break;
+                }
+                RenderTools.renderText(textx, currenty, s.getText(), factor, s.getColor());
+                currenty += 10;
+            }
         }
     }
 
@@ -199,10 +261,11 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTE> {
         float r = ((color & 16711680) >> 16) / 255.0F;
         float g = ((color & 65280) >> 8) / 255.0F;
         float b = ((color & 255)) / 255.0F;
-        renderer.pos(-.46f, dim, -0.08f).color(r, g, b, 1f).endVertex();
-        renderer.pos(dim, dim, -0.08f).color(r, g, b, 1f).endVertex();
-        renderer.pos(dim, -.46f, -0.08f).color(r, g, b, 1f).endVertex();
-        renderer.pos(-.46f, -.46f, -0.08f).color(r, g, b, 1f).endVertex();
+        float z = -0.08f;
+        renderer.pos(-.46f, dim, z).color(r, g, b, 1f).endVertex();
+        renderer.pos(dim, dim, z).color(r, g, b, 1f).endVertex();
+        renderer.pos(dim, -.46f, z).color(r, g, b, 1f).endVertex();
+        renderer.pos(-.46f, -.46f, z).color(r, g, b, 1f).endVertex();
         tessellator.draw();
 
         GlStateManager.popMatrix();

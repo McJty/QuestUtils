@@ -10,6 +10,7 @@ import mcjty.questutils.blocks.screen.ScreenTE;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -25,25 +26,64 @@ public class ScreenDriver {
                 super(tile, "questutils_screen");
             }
 
-            @Callback(doc = "function(string); Set the title")
+            @Callback(doc = "function():string; Return the identifier of this block")
+            public Object[] getIdentifier(Context c, Arguments a) {
+                return new Object[]{tile.getIdentifier()};
+            }
+
+            @Callback(doc = "function(string,integer,integer); Set the title (text, alignment, color")
             public Object[] setTitle(Context c, Arguments a) {
                 String newVal = a.checkString(0);
-                tile.setTitle(newVal);
+                int align = a.checkInteger(1);
+                int color = a.checkInteger(2);
+                tile.setTitle(newVal, ScreenTE.Alignment.values()[align], color);
                 return new Object[]{true};
             }
 
-            @Callback(doc = "function(integer,string); Set a status line")
+            @Callback(doc = "function(integer,string,integer,integer); Set a status line (index, text, alignment, color)")
             public Object[] setStatus(Context c, Arguments a) {
                 Integer index = a.checkInteger(0);
                 String newVal = a.checkString(1);
-                tile.setStatus(index, newVal);
+                int align = a.checkInteger(2);
+                int color = a.checkInteger(3);
+                tile.setStatus(index, newVal, ScreenTE.Alignment.values()[align], color);
                 return new Object[]{true};
             }
 
-            @Callback(doc = "function(itemstack); Set the objective item to show on the screen")
+            @Callback(doc = "function(integer); Set the border color (for the objective item/icon)")
+            public Object[] setBorderColor(Context c, Arguments a) {
+                Integer color = a.checkInteger(0);
+                tile.setBorderColor(color);
+                return new Object[]{true};
+            }
+
+            @Callback(doc = "function(integer); Set the screen color")
+            public Object[] setColor(Context c, Arguments a) {
+                Integer color = a.checkInteger(0);
+                tile.setColor(color);
+                return new Object[]{true};
+            }
+
+            @Callback(doc = "function(boolean); Set the screen transparency")
+            public Object[] setTransparency(Context c, Arguments a) {
+                Boolean trans = a.checkBoolean(0);
+                tile.setTransparent(trans);
+                return new Object[]{true};
+            }
+
+            @Callback(doc = "function(integer,itemstack); Set the objective item to show on the screen")
             public Object[] setObjectiveItem(Context c, Arguments a) {
-                ItemStack newVal = a.checkItemStack(0);
-                tile.setInventorySlotContents(ScreenContainer.SLOT_ITEM, newVal);
+                Integer index = a.checkInteger(0);
+                ItemStack newVal = a.checkItemStack(1);
+                tile.setInventorySlotContents(ScreenContainer.SLOT_ITEM + index, newVal);
+                return new Object[]{true};
+            }
+
+            @Callback(doc = "function(string,string); Set the objective icon to show on the screen")
+            public Object[] setObjectiveIcon(Context c, Arguments a) {
+                String icon = a.checkString(0);
+                String filename = a.checkString(1);
+                tile.setIcon(icon == null || icon.trim().isEmpty() ? null : new ResourceLocation(icon), filename);
                 return new Object[]{true};
             }
 

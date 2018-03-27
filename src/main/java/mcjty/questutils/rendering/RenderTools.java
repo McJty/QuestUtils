@@ -5,11 +5,43 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 public class RenderTools {
 
-    public static void renderItem(int x, int y, ItemStack stack, float factor) {
+    public static void renderIcon(int x, int y, ResourceLocation icon, float factor, int borderColor) {
+        Minecraft.getMinecraft().renderEngine.bindTexture(icon);
+
+        RenderHelper.enableGUIStandardItemLighting();
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+
+        GlStateManager.depthMask(true);
+
+        GlStateManager.enableLighting();
+        GlStateManager.enableDepth();
+
+        float f3 = 0.0075F * 3;
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(-0.5F, 0.5F, 0.08F);
+        GlStateManager.scale(f3 * factor, -f3 * factor, 0.0001f);
+        renderBorder(x, y, borderColor);
+        GlStateManager.popMatrix();
+
+
+        GlStateManager.pushMatrix();
+        f3 = 0.002965f;
+        GlStateManager.translate(-0.5F, 0.5F, 0.06F);
+        GlStateManager.scale(f3 * factor, -f3 * factor, 0.0001f);
+        mcjty.lib.gui.RenderHelper.drawTexturedModalRect(x+97, y+82, 0, 0, 128, 128, 128, 128);
+        GlStateManager.popMatrix();
+
+        GlStateManager.disableLighting();
+        RenderHelper.enableStandardItemLighting();
+
+    }
+
+    public static void renderItem(int x, int y, ItemStack stack, float factor, int borderColor) {
 
         RenderHelper.enableGUIStandardItemLighting();
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
@@ -24,9 +56,6 @@ public class RenderTools {
         GlStateManager.translate(-0.5F, 0.5F, 0.06F);
         GlStateManager.scale(f3 * factor, -f3 * factor, 0.0001f);
 
-//        short short1 = 240;
-//        short short2 = 240;
-//        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, short1 / 1.0F, short2 / 1.0F);
         renderSlot(y-5, stack, 0, x);
 
         GlStateManager.popMatrix();
@@ -37,6 +66,7 @@ public class RenderTools {
 
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
 
+        renderBorder(x, y, borderColor);
         renderSlotOverlay(fontRenderer, y, stack, 0, x);
         GlStateManager.popMatrix();
 
@@ -54,7 +84,6 @@ public class RenderTools {
     }
 
     private static int renderSlotOverlay(FontRenderer fontRenderer, int currenty, ItemStack itm, int index, int x) {
-        renderBorder(x, currenty);
         if (!itm.isEmpty()) {
 //                itemRender.renderItemOverlayIntoGUI(fontRenderer, Minecraft.getMinecraft().getTextureManager(), itm, x, currenty);
             renderItemOverlayIntoGUI(fontRenderer, itm, x, currenty);
@@ -63,16 +92,19 @@ public class RenderTools {
         return x;
     }
 
-    private static void renderBorder(int x, int y) {
+    private static void renderBorder(int x, int y, int color) {
         GlStateManager.disableLighting();
         GlStateManager.disableTexture2D();
         GlStateManager.disableAlpha();
         GlStateManager.disableBlend();
         Tessellator tessellator = Tessellator.getInstance();
-        renderQuad(tessellator, x-1, y-6, 18, 1, 255, 128, 0, 0);
-        renderQuad(tessellator, x-1, y+11, 18, 1, 255, 128, 0, 0);
-        renderQuad(tessellator, x-1, y-5, 1, 16, 255, 128, 0, 0);
-        renderQuad(tessellator, x+16, y-5, 1, 16, 255, 128, 0, 0);
+        int r = (color>>16) & 0xff;//255;
+        int g = (color>>8) & 0xff; //128;
+        int b = (color) & 0xff; //0;
+        renderQuad(tessellator, x-1, y-6, 18, 1, r, g, b, 0);
+        renderQuad(tessellator, x-1, y+11, 18, 1, r, g, b, 0);
+        renderQuad(tessellator, x-1, y-5, 1, 16, r, g, b, 0);
+        renderQuad(tessellator, x+16, y-5, 1, 16, r, g, b, 0);
         GlStateManager.enableAlpha();
         GlStateManager.enableTexture2D();
         GlStateManager.enableLighting();

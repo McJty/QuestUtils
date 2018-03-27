@@ -12,7 +12,7 @@ import java.io.IOException;
 
 public class ImageLoader {
 
-    public static void loadAndBind(ResourceLocation id, String filename) {
+    public static void loadAndBind(ResourceLocation id, File file) {
         ITextureObject texture = Minecraft.getMinecraft().renderEngine.getTexture(id);
         if (texture != null) {
             // Already loaded
@@ -20,9 +20,11 @@ public class ImageLoader {
         }
 
         try {
-            BufferedImage image = ImageIO.read(new File(filename));
-            texture = new DynamicTexture(image);
-            Minecraft.getMinecraft().renderEngine.loadTexture(id, texture);
+            if (file.exists()) {
+                BufferedImage image = ImageIO.read(file);
+                texture = new DynamicTexture(image);
+                Minecraft.getMinecraft().renderEngine.loadTexture(id, texture);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

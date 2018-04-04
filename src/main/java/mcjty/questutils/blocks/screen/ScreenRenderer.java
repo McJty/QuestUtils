@@ -238,29 +238,56 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTE> {
     }
 
     private void renderScreenBoard(int size, int color) {
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder renderer = tessellator.getBuffer();
+
         this.bindTexture(TEXTURE);
         GlStateManager.pushMatrix();
         GlStateManager.scale(1, -1, -1);
-        if (size == ScreenTE.SIZE_GIGANTIC) {
-            this.screenModelGigantic.render();
-        } else if (size == ScreenTE.SIZE_ENOURMOUS) {
-            this.screenModelEnourmous.render();
-        } else if (size == ScreenTE.SIZE_HUGE) {
-            this.screenModelHuge.render();
-        } else if (size == ScreenTE.SIZE_LARGE) {
-            this.screenModelLarge.render();
-        } else {
-            this.screenModel.render();
-        }
+//        switch (size) {
+//            case ScreenTE.SIZE_NORMAL: this.screenModel.render(); break;
+//            case ScreenTE.SIZE_LARGE: this.screenModelLarge.render(); break;
+//            case ScreenTE.SIZE_HUGE: this.screenModelHuge.render(); break;
+//            case ScreenTE.SIZE_ENOURMOUS: this.screenModelEnourmous.render(); break;
+//            case ScreenTE.SIZE_GIGANTIC: this.screenModelGigantic.render(); break;
+//        }
 
-        GlStateManager.depthMask(false);
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder renderer = tessellator.getBuffer();
-        renderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
         float dim = size + .46f;
         float r = ((color & 16711680) >> 16) / 255.0F;
         float g = ((color & 65280) >> 8) / 255.0F;
         float b = ((color & 255)) / 255.0F;
+
+        renderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+        renderer.pos(-.46f, dim, 0).tex(0, 0).endVertex();
+        renderer.pos(-.46f, -.46f, 0).tex(0, 1).endVertex();
+        renderer.pos(dim, -.46f, 0).tex(1, 1).endVertex();
+        renderer.pos(dim, dim, 0).tex(1, 0).endVertex();
+
+        renderer.pos(-.46f, dim, 0).tex(0, 0).endVertex();
+        renderer.pos(dim, dim, 0).tex(0, 0).endVertex();
+        renderer.pos(dim, dim, -.1).tex(0, 0).endVertex();
+        renderer.pos(-.46f, dim, -.1).tex(0, 0).endVertex();
+
+        renderer.pos(-.46f, -.46f, 0).tex(0, 0).endVertex();
+        renderer.pos(-.46f, -.46f, -.1).tex(0, 0).endVertex();
+        renderer.pos(dim, -.46f, -.1).tex(0, 0).endVertex();
+        renderer.pos(dim, -.46f, 0).tex(0, 0).endVertex();
+
+        renderer.pos(-.46f, -.46f, 0).tex(0, 0).endVertex();
+        renderer.pos(-.46f, dim, 0).tex(0, 0).endVertex();
+        renderer.pos(-.46f, dim, -.1).tex(0, 0).endVertex();
+        renderer.pos(-.46f, -.46f, -.1).tex(0, 0).endVertex();
+
+        renderer.pos(dim, -.46f, 0).tex(0, 0).endVertex();
+        renderer.pos(dim, -.46f, -.1).tex(0, 0).endVertex();
+        renderer.pos(dim, dim, -.1).tex(0, 0).endVertex();
+        renderer.pos(dim, dim, 0).tex(0, 0).endVertex();
+
+        tessellator.draw();
+
+
+        GlStateManager.depthMask(false);
+        renderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
         float z = -0.08f;
         renderer.pos(-.46f, dim, z).color(r, g, b, 1f).endVertex();
         renderer.pos(dim, dim, z).color(r, g, b, 1f).endVertex();

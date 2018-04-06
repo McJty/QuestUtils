@@ -31,11 +31,6 @@ import java.io.File;
 public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTE> {
 
     private static final ResourceLocation TEXTURE = new ResourceLocation(QuestUtils.MODID, "textures/blocks/screenframe.png");
-    private final ScreenModel screenModel = new ScreenModel(ScreenTE.SIZE_NORMAL);
-    private final ScreenModel screenModelLarge = new ScreenModel(ScreenTE.SIZE_LARGE);
-    private final ScreenModel screenModelHuge = new ScreenModel(ScreenTE.SIZE_HUGE);
-    private final ScreenModel screenModelEnourmous = new ScreenModel(ScreenTE.SIZE_ENOURMOUS);
-    private final ScreenModel screenModelGigantic = new ScreenModel(ScreenTE.SIZE_GIGANTIC);
 
     @Override
     public void render(ScreenTE tileEntity, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
@@ -244,13 +239,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTE> {
         this.bindTexture(TEXTURE);
         GlStateManager.pushMatrix();
         GlStateManager.scale(1, -1, -1);
-//        switch (size) {
-//            case ScreenTE.SIZE_NORMAL: this.screenModel.render(); break;
-//            case ScreenTE.SIZE_LARGE: this.screenModelLarge.render(); break;
-//            case ScreenTE.SIZE_HUGE: this.screenModelHuge.render(); break;
-//            case ScreenTE.SIZE_ENOURMOUS: this.screenModelEnourmous.render(); break;
-//            case ScreenTE.SIZE_GIGANTIC: this.screenModelGigantic.render(); break;
-//        }
+
 
         float dim = size + .46f;
         float r = ((color & 16711680) >> 16) / 255.0F;
@@ -285,6 +274,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTE> {
 
         tessellator.draw();
 
+        GlStateManager.disableTexture2D();
 
         GlStateManager.depthMask(false);
         renderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
@@ -294,6 +284,9 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTE> {
         renderer.pos(dim, -.46f, z).color(r, g, b, 1f).endVertex();
         renderer.pos(-.46f, -.46f, z).color(r, g, b, 1f).endVertex();
         tessellator.draw();
+
+        GlStateManager.enableTexture2D();
+
 
         GlStateManager.popMatrix();
     }

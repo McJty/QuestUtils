@@ -30,7 +30,7 @@ public class CmdQU extends CommandBase {
         return "qu <command> [ <args> ]";
     }
 
-    private final static Map<String, ICommandHandler> COMMANDS = new HashMap();
+    private static final Map<String, ICommandHandler> COMMANDS = new HashMap<>();
 
     static {
         COMMANDS.put("list", CmdQU::list);

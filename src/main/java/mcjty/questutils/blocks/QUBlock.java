@@ -2,6 +2,7 @@ package mcjty.questutils.blocks;
 
 import mcjty.lib.container.GenericBlock;
 import mcjty.questutils.QuestUtils;
+import mcjty.questutils.items.ModItems;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
@@ -30,5 +31,13 @@ public abstract class QUBlock <T extends QUTileEntity, C extends Container> exte
                 probeInfo.text(TextStyleClass.LABEL + "Id: " + TextStyleClass.INFO + ((QUTileEntity) te).getIdentifier());
             }
         }
+    }
+
+    @Override
+    protected boolean checkAccess(World world, EntityPlayer player, TileEntity te) {
+        if (player.getHeldItem(player.getActiveHand()).getItem() == ModItems.controlKey) {
+            return super.checkAccess(world, player, te);
+        }
+        return true;
     }
 }

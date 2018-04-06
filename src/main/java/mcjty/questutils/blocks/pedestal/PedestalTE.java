@@ -3,17 +3,25 @@ package mcjty.questutils.blocks.pedestal;
 import com.google.gson.JsonObject;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.network.Argument;
 import mcjty.questutils.blocks.QUTileEntity;
 import mcjty.questutils.json.JsonTools;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 
+import java.util.Map;
+
 public class PedestalTE extends QUTileEntity implements DefaultSidedInventory {
+
+    public static final String CMD_SETMODE = "cmdSetMode";
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, PedestalContainer.factory, 1);
     private static int[] slots = null;
+
+    private PedestalMode mode = PedestalMode.MODE_DISPLAY;
 
     @Override
     protected boolean needsCustomInvWrapper() {
@@ -54,16 +62,27 @@ public class PedestalTE extends QUTileEntity implements DefaultSidedInventory {
         return canPlayerAccess(player);
     }
 
+    public PedestalMode getMode() {
+        return mode;
+    }
+
+    public void setMode(PedestalMode mode) {
+        this.mode = mode;
+        markDirtyClient();
+    }
+
     @Override
     public void readRestorableFromNBT(NBTTagCompound compound) {
         super.readRestorableFromNBT(compound);
         readBufferFromNBT(compound, inventoryHelper);
+        mode = PedestalMode.values()[compound.getInteger("mode")];
     }
 
     @Override
     public void writeRestorableToNBT(NBTTagCompound compound) {
         super.writeRestorableToNBT(compound);
         writeBufferToNBT(compound, inventoryHelper);
+        compound.setInteger("mode", mode.ordinal());
     }
 
     @Override
@@ -81,4 +100,20 @@ public class PedestalTE extends QUTileEntity implements DefaultSidedInventory {
             JsonTools.readItemsFromJson(object.getAsJsonArray("filter"), getInventoryHelper(), 0, 1);
         }
     }
+
+    @Override
+    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
+        boolean rc = super.execute(playerMP, command, args);
+        if (rc) {
+            return true;
+        }
+        if (CMD_SETMODE.equals(command)) {
+            String m = args.get("mode").getString();
+            setMode(PedestalMode.getModeByName(m));
+            return true;
+        }
+
+        return false;
+    }
+
 }

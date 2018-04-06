@@ -1,6 +1,5 @@
 package mcjty.questutils.blocks.itemcomparator;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;

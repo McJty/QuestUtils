@@ -1,11 +1,8 @@
 package mcjty.questutils.blocks.itemcomparator;
 
-import mcjty.lib.container.GenericBlock;
 import mcjty.lib.container.GenericGuiContainer;
-import mcjty.questutils.QuestUtils;
 import mcjty.questutils.blocks.QUBlock;
 import mcjty.questutils.proxy.GuiProxy;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;

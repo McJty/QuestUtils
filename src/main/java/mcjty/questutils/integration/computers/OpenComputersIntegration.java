@@ -8,5 +8,6 @@ public class OpenComputersIntegration {
     public static void init() {
         Driver.add(new ItemComparatorDriver.OCDriver());
         Driver.add(new ScreenDriver.OCDriver());
+        Driver.add(new PedestalDriver.OCDriver());
     }
 }

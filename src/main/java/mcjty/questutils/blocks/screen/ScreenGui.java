@@ -156,7 +156,6 @@ public class ScreenGui extends GenericGuiContainer<ScreenTE> {
     }
 
     private void updateString(String prefix, String title, ScreenTE.Alignment alignment, int color) {
-        System.out.println("color = " + color);
         sendServerCommand(QuestUtilsMessages.INSTANCE, ScreenTE.CMD_UPDATE_STRING,
                 new Argument(prefix, title),
                 new Argument(prefix+"A", alignment.ordinal()),

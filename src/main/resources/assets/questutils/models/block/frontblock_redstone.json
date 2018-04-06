@@ -6,7 +6,7 @@
     "up": "questutils:blocks/top",
     "north": "#front",
     "east": "questutils:blocks/side",
-    "south": "questutils:blocks/side",
+    "south": "questutils:blocks/side_redstone",
     "west": "questutils:blocks/side"
   }
 }

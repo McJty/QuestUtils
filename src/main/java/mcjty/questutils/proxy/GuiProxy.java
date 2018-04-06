@@ -12,6 +12,7 @@ public class GuiProxy implements IGuiHandler {
 
     public static final int GUI_ITEM_COMPARATOR = 0;
     public static final int GUI_SCREEN = 1;
+    public static final int GUI_PEDESTAL = 2;
 
     @Override
     public Object getServerGuiElement(int guiid, EntityPlayer entityPlayer, World world, int x, int y, int z) {

@@ -53,7 +53,7 @@ public class PedestalBlock extends QUBlock<PedestalTE, PedestalContainer> {
             PedestalMode mode = ((PedestalTE) te).getMode();
             switch (mode) {
                 case MODE_DISPLAY:
-                    return true;
+                    return false;
                 case MODE_INTERACT:
                     break;
                 case MODE_PLACE:

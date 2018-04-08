@@ -367,14 +367,7 @@ public class ScreenBlock extends QUBlock<ScreenTE, ScreenContainer> {
             screenTileEntity.setColor(color);
             return true;
         }
-        if (player.isSneaking()) {
-            return super.openGui(world, x, y, z, player);
-        } else {
-            if (world.isRemote) {
-//                activateOnClient(world, new BlockPos(x, y, z));
-            }
-            return true;
-        }
+        return super.openGui(world, x, y, z, player);
     }
 
     public static final AxisAlignedBB BLOCK_AABB = new AxisAlignedBB(0.5F - 0.5F, 0.0F, 0.5F - 0.5F, 0.5F + 0.5F, 1.0F, 0.5F + 0.5F);

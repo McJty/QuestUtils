@@ -23,6 +23,8 @@ public class ScreenGui extends GenericGuiContainer<ScreenTE> {
     private TextField iconField;
     private TextField fileField;
     private ColorChoiceLabel borderColor;
+    private ColorChoiceLabel screenColor;
+    private ToggleButton transp;
 
     private static final ResourceLocation iconLocation = new ResourceLocation(QuestUtils.MODID, "textures/gui/screen.png");
     private static final ResourceLocation iconGuiElements = new ResourceLocation(QuestUtils.MODID, "textures/gui/guielements.png");
@@ -46,20 +48,40 @@ public class ScreenGui extends GenericGuiContainer<ScreenTE> {
         Panel stringPanel = getStringPanel("Title", "title", tileEntity.getTitle()).setLayoutHint(new PositionalLayout.PositionalHint(0, 22, WIDTH, 14));
 
         iconField = new TextField(mc, this)
-                .setLayoutHint(new PositionalLayout.PositionalHint(100, 47, 133, 14));
+                .setLayoutHint(new PositionalLayout.PositionalHint(40, 44, 144, 14));
         iconField.setText(tileEntity.getIcon() == null ? "" : tileEntity.getIcon().toString());
+        iconField.setTooltips("Resource name for", "the image to show", "Use the file below", "to load this from image");
         iconField.addTextEvent((parent, newText) -> update());
 
         borderColor = new ColorChoiceLabel(mc, this)
-                .setLayoutHint(new PositionalLayout.PositionalHint(12, 67, 20, 14));
+                .setLayoutHint(new PositionalLayout.PositionalHint(12, 200, 52, 14));
         for (EnumDyeColor color : EnumDyeColor.values()) {
             borderColor.addColors(color.getColorValue());
         }
+        borderColor.setTooltips("Set the color for the", "border around the items");
         borderColor.setCurrentColor(tileEntity.getBorderColor());
         borderColor.addChoiceEvent((parent, newColor) -> update());
 
+        transp = new ToggleButton(mc, this)
+                .setLayoutHint(new PositionalLayout.PositionalHint(190, 58, 20 ,14));
+        transp.setTooltips("Transparency mode");
+        transp.setCheckMarker(true);
+        transp.setPressed(tileEntity.isTransparent());
+        transp.addButtonEvent(parent -> update());
+
+        screenColor = new ColorChoiceLabel(mc, this)
+                .setLayoutHint(new PositionalLayout.PositionalHint(190, 44, 20, 14));
+        for (EnumDyeColor color : EnumDyeColor.values()) {
+            screenColor.addColors(color.getColorValue());
+        }
+        screenColor.setTooltips("Set the color for", "the screen");
+        screenColor.setCurrentColor(tileEntity.getColor());
+        screenColor.addChoiceEvent((parent, newColor) -> update());
+
+
         fileField = new TextField(mc, this)
-                .setLayoutHint(new PositionalLayout.PositionalHint(100, 63, 133, 14));
+                .setLayoutHint(new PositionalLayout.PositionalHint(40, 60, 144, 14));
+        fileField.setTooltips("Filename for the image", "to show");
         fileField.setText(tileEntity.getFilename() == null ? "" : tileEntity.getFilename());
         fileField.addTextEvent((parent, newText) -> update());
 
@@ -71,8 +93,18 @@ public class ScreenGui extends GenericGuiContainer<ScreenTE> {
                 .addChild(new Label<>(mc, this).setText("ID").setLayoutHint(new PositionalLayout.PositionalHint(12, 6, 26, 14)).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT))
                 .addChild(idField)
                 .addChild(iconField)
+                .addChild(new Label<>(mc, this)
+                        .setText("Icon")
+                        .setLayoutHint(new PositionalLayout.PositionalHint(12, 44, 26, 14))
+                        .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT))
                 .addChild(fileField)
+                .addChild(new Label<>(mc, this)
+                        .setText("File")
+                        .setLayoutHint(new PositionalLayout.PositionalHint(12, 60, 26, 14))
+                        .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT))
                 .addChild(borderColor)
+                .addChild(screenColor)
+                .addChild(transp)
                 .addChild(stringPanel)
                 .addChild(status0Panel)
                 .addChild(status1Panel)
@@ -151,6 +183,8 @@ public class ScreenGui extends GenericGuiContainer<ScreenTE> {
     private void update() {
         sendServerCommand(QuestUtilsMessages.INSTANCE, ScreenTE.CMD_UPDATE,
                 new Argument("color", borderColor.getCurrentColor()),
+                new Argument("screen", screenColor.getCurrentColor()),
+                new Argument("transp", transp.isPressed()),
                 new Argument("icon", iconField.getText()),
                 new Argument("file", fileField.getText()));
     }

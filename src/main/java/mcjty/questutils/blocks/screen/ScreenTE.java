@@ -309,8 +309,12 @@ public class ScreenTE extends QUTileEntity implements ITickable, DefaultSidedInv
         if (CMD_UPDATE.equals(command)) {
             Integer color = args.get("color").getInteger();
             setBorderColor(color);
+            Integer screen = args.get("screen").getInteger();
+            setColor(screen);
             String iconString = args.get("icon").getString();
             String fileName = args.get("file").getString();
+            boolean transp = args.get("transp").getBoolean();
+            setTransparent(transp);
             setIcon(iconString.trim().isEmpty() ? null : new ResourceLocation(iconString),
                     fileName.trim().isEmpty() ? null : fileName);
             markDirtyClient();

@@ -16,7 +16,7 @@ public enum PedestalMode {
 
     static {
         for (PedestalMode mode : PedestalMode.values()) {
-            MODE_MAP.put(mode.getName(), mode);
+            MODE_MAP.put(mode.getName().toLowerCase(), mode);
         }
     }
 
@@ -34,6 +34,6 @@ public enum PedestalMode {
     }
 
     public static PedestalMode getModeByName(String name) {
-        return MODE_MAP.get(name);
+        return MODE_MAP.get(name.toLowerCase());
     }
 }

@@ -2,6 +2,7 @@ package mcjty.questutils.blocks.pedestal;
 
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.questutils.blocks.QUBlock;
+import mcjty.questutils.items.ModItems;
 import mcjty.questutils.proxy.GuiProxy;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -48,21 +49,28 @@ public class PedestalBlock extends QUBlock<PedestalTE, PedestalContainer> {
 
     @Override
     public boolean handleModule(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+        if (heldItem.getItem() == ModItems.controlKey) {
+            return false;
+        }
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof PedestalTE) {
-            PedestalMode mode = ((PedestalTE) te).getMode();
+            PedestalTE pedestal = (PedestalTE) te;
+            PedestalMode mode = pedestal.getMode();
             switch (mode) {
                 case MODE_DISPLAY:
-                    return false;
+                    break;
                 case MODE_INTERACT:
+                    pedestal.interactItem(player, hand);
                     break;
                 case MODE_PLACE:
+                    pedestal.placeItem(player, hand);
                     break;
                 case MODE_TAKE:
+                    pedestal.takeItem(player, hand);
                     break;
             }
         }
-        return false;
+        return true;
     }
 
     @Override

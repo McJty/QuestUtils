@@ -8,9 +8,11 @@ import mcjty.questutils.blocks.QUTileEntity;
 import mcjty.questutils.json.JsonTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 
 import java.util.Map;
 
@@ -22,6 +24,35 @@ public class PedestalTE extends QUTileEntity implements DefaultSidedInventory {
     private static int[] slots = null;
 
     private PedestalMode mode = PedestalMode.MODE_DISPLAY;
+
+    public void interactItem(EntityPlayer player, EnumHand hand) {
+        if (player.getHeldItem(hand).isEmpty()) {
+            takeItem(player, hand);
+        } else {
+            placeItem(player, hand);
+        }
+    }
+
+    public void placeItem(EntityPlayer player, EnumHand hand) {
+        if (player.getHeldItem(hand).isEmpty()) {
+            return;
+        }
+        ItemStack remaining = InventoryHelper.insertItem(world, pos, null, player.getHeldItem(hand));
+        player.setHeldItem(hand, remaining);
+    }
+
+    public void takeItem(EntityPlayer player, EnumHand hand) {
+        ItemStack stack = getStackInSlot(PedestalContainer.SLOT_ITEM);
+        if (stack.isEmpty()) {
+            return;
+        }
+        if (player.getHeldItem(hand).isEmpty()) {
+            player.setHeldItem(hand, stack);
+            setInventorySlotContents(PedestalContainer.SLOT_ITEM, ItemStack.EMPTY);
+        } else if (player.inventory.addItemStackToInventory(stack)) {
+            setInventorySlotContents(PedestalContainer.SLOT_ITEM, ItemStack.EMPTY);
+        }
+    }
 
     @Override
     protected boolean needsCustomInvWrapper() {

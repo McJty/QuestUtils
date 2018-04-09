@@ -265,47 +265,6 @@ public class ScreenBlock extends QUBlock<ScreenTE, ScreenContainer> {
         }
     }
 
-    private static class Setup {
-        private final int size;
-
-        public Setup(int size) {
-            this.size = size;
-        }
-
-        public int getSize() {
-            return size;
-        }
-    }
-
-    private static Setup transitions[] = new Setup[] {
-            new Setup(ScreenTE.SIZE_NORMAL),
-            new Setup(ScreenTE.SIZE_LARGE),
-            new Setup(ScreenTE.SIZE_HUGE),
-            new Setup(ScreenTE.SIZE_ENOURMOUS),
-            new Setup(ScreenTE.SIZE_GIGANTIC),
-    };
-
-    @Override
-    protected boolean wrenchUse(World world, BlockPos pos, EnumFacing side, EntityPlayer player) {
-        cycleSizeMode(world, pos);
-        return true;
-    }
-
-    public void cycleSizeMode(World world, BlockPos pos) {
-        ScreenTE screenTileEntity = (ScreenTE) world.getTileEntity(pos);
-        IBlockState state = world.getBlockState(pos);
-        clearInvisibleBlocks(world, pos, state, screenTileEntity.getSize());
-        for (int i = 0 ; i < transitions.length ; i++) {
-            Setup setup = transitions[i];
-            if (setup.getSize() == screenTileEntity.getSize()) {
-                Setup next = transitions[(i+1) % transitions.length];
-                screenTileEntity.setSize(next.getSize());
-                setInvisibleBlocks(world, pos, screenTileEntity.getSize());
-                break;
-            }
-        }
-    }
-
     public static final AxisAlignedBB BLOCK_AABB = new AxisAlignedBB(0.5F - 0.5F, 0.0F, 0.5F - 0.5F, 0.5F + 0.5F, 1.0F, 0.5F + 0.5F);
     public static final AxisAlignedBB NORTH_AABB = new AxisAlignedBB(0.0F, 0.0F, 1.0F - 0.125F, 1.0F, 1.0F, 1.0F);
     public static final AxisAlignedBB SOUTH_AABB = new AxisAlignedBB(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 0.125F);

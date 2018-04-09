@@ -25,9 +25,12 @@ public class ScreenGui extends GenericGuiContainer<ScreenTE> {
     private ColorChoiceLabel borderColor;
     private ColorChoiceLabel screenColor;
     private ToggleButton transp;
+    private ChoiceLabel size;
 
     private static final ResourceLocation iconLocation = new ResourceLocation(QuestUtils.MODID, "textures/gui/screen.png");
     private static final ResourceLocation iconGuiElements = new ResourceLocation(QuestUtils.MODID, "textures/gui/guielements.png");
+
+    private final String[] SIZES = { "1x1", "2x2", "3x3", "4x4", "5x5" };
 
     public ScreenGui(ScreenTE tileEntity, ScreenContainer container) {
         super(QuestUtils.instance, QuestUtilsMessages.INSTANCE, tileEntity, container, 0, "screen");
@@ -63,7 +66,7 @@ public class ScreenGui extends GenericGuiContainer<ScreenTE> {
         borderColor.addChoiceEvent((parent, newColor) -> update());
 
         transp = new ToggleButton(mc, this)
-                .setLayoutHint(new PositionalLayout.PositionalHint(190, 58, 20 ,14));
+                .setLayoutHint(new PositionalLayout.PositionalHint(213, 44, 20 ,14));
         transp.setTooltips("Transparency mode");
         transp.setCheckMarker(true);
         transp.setPressed(tileEntity.isTransparent());
@@ -85,6 +88,12 @@ public class ScreenGui extends GenericGuiContainer<ScreenTE> {
         fileField.setText(tileEntity.getFilename() == null ? "" : tileEntity.getFilename());
         fileField.addTextEvent((parent, newText) -> update());
 
+        size = new ChoiceLabel(mc, this)
+            .addChoices(SIZES)
+            .setLayoutHint(new PositionalLayout.PositionalHint(190, 58, 43, 14));
+        size.setChoice(SIZES[tileEntity.getSize()]);
+        size.addChoiceEvent((parent, newChoice) -> update());
+
         Panel status0Panel = getStringPanel("Stat0", "status0", tileEntity.getStatus()[0]).setLayoutHint(new PositionalLayout.PositionalHint(0, 82, WIDTH, 14));
         Panel status1Panel = getStringPanel("Stat1", "status1", tileEntity.getStatus()[1]).setLayoutHint(new PositionalLayout.PositionalHint(0, 100, WIDTH, 14));
         Panel status2Panel = getStringPanel("Stat2", "status2", tileEntity.getStatus()[2]).setLayoutHint(new PositionalLayout.PositionalHint(0, 118, WIDTH, 14));
@@ -105,6 +114,7 @@ public class ScreenGui extends GenericGuiContainer<ScreenTE> {
                 .addChild(borderColor)
                 .addChild(screenColor)
                 .addChild(transp)
+                .addChild(size)
                 .addChild(stringPanel)
                 .addChild(status0Panel)
                 .addChild(status1Panel)
@@ -114,6 +124,7 @@ public class ScreenGui extends GenericGuiContainer<ScreenTE> {
 
         window = new Window(this, toplevel);
     }
+
 
     private Panel getStringPanel(String label, String prefix, ScreenTE.FormattedString string) {
         Panel panel = new Panel(mc, this).setLayout(new PositionalLayout());
@@ -185,8 +196,13 @@ public class ScreenGui extends GenericGuiContainer<ScreenTE> {
                 new Argument("color", borderColor.getCurrentColor()),
                 new Argument("screen", screenColor.getCurrentColor()),
                 new Argument("transp", transp.isPressed()),
+                new Argument("size", getSize()),
                 new Argument("icon", iconField.getText()),
                 new Argument("file", fileField.getText()));
+    }
+
+    private int getSize() {
+        return size.getCurrentChoice().charAt(0)-'1';
     }
 
     private void updateString(String prefix, String title, ScreenTE.Alignment alignment, int color) {

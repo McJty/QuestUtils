@@ -5,6 +5,7 @@ import com.google.gson.JsonPrimitive;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.network.Argument;
+import mcjty.questutils.blocks.ModBlocks;
 import mcjty.questutils.blocks.QUTileEntity;
 import mcjty.questutils.json.JsonTools;
 import net.minecraft.entity.player.EntityPlayer;
@@ -315,6 +316,8 @@ public class ScreenTE extends QUTileEntity implements ITickable, DefaultSidedInv
             String fileName = args.get("file").getString();
             boolean transp = args.get("transp").getBoolean();
             setTransparent(transp);
+            int s = args.get("size").getInteger();
+            setSize(s);
             setIcon(iconString.trim().isEmpty() ? null : new ResourceLocation(iconString),
                     fileName.trim().isEmpty() ? null : fileName);
             markDirtyClient();

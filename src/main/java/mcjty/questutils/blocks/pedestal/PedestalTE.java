@@ -8,7 +8,6 @@ import mcjty.questutils.blocks.QUTileEntity;
 import mcjty.questutils.json.JsonTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -22,6 +21,7 @@ public class PedestalTE extends QUTileEntity implements DefaultSidedInventory {
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, PedestalContainer.factory, 1);
     private static int[] slots = null;
+    private boolean inAlarm = false;
 
     private PedestalMode mode = PedestalMode.MODE_DISPLAY;
 
@@ -66,6 +66,45 @@ public class PedestalTE extends QUTileEntity implements DefaultSidedInventory {
         }
         return slots;
     }
+
+    public void detect() {
+        setAlarm(!getStackInSlot(PedestalContainer.SLOT_ITEM).isEmpty());
+    }
+
+    public boolean isPowered() {
+        return inAlarm;
+    }
+
+
+    public void setAlarm(boolean alarm) {
+        if (alarm != inAlarm) {
+            inAlarm = alarm;
+            getWorld().notifyNeighborsOfStateChange(this.pos, this.getBlockType(), false);
+            markDirty();
+        }
+    }
+
+    @Override
+    public void setInventorySlotContents(int index, ItemStack stack) {
+        getInventoryHelper().setInventorySlotContents(getInventoryStackLimit(), index, stack);
+        detect();
+    }
+
+    @Override
+    public ItemStack decrStackSize(int index, int count) {
+        ItemStack stack = getInventoryHelper().decrStackSize(index, count);
+        detect();
+        return stack;
+    }
+
+    @Override
+    public ItemStack removeStackFromSlot(int index) {
+        ItemStack stack = getInventoryHelper().removeStackFromSlot(index);
+        detect();
+        return stack;
+    }
+
+
 
     @Override
     public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) {
@@ -129,6 +168,7 @@ public class PedestalTE extends QUTileEntity implements DefaultSidedInventory {
         super.readFromJson(object);
         if (object.has("filter")) {
             JsonTools.readItemsFromJson(object.getAsJsonArray("filter"), getInventoryHelper(), 0, 1);
+            detect();
         }
     }
 

@@ -2,6 +2,8 @@ package mcjty.questutils.blocks.pedestal;
 
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.questutils.blocks.QUBlock;
+import mcjty.questutils.blocks.itemcomparator.ItemComparatorBlock;
+import mcjty.questutils.blocks.itemcomparator.ItemComparatorTE;
 import mcjty.questutils.items.ModItems;
 import mcjty.questutils.proxy.GuiProxy;
 import net.minecraft.block.state.IBlockState;
@@ -27,6 +29,12 @@ public class PedestalBlock extends QUBlock<PedestalTE, PedestalContainer> {
     public RotationType getRotationType() {
         return RotationType.NONE;
     }
+
+    @Override
+    public boolean hasRedstoneOutput() {
+        return true;
+    }
+
 
     @Override
     public int getGuiID() {
@@ -72,6 +80,28 @@ public class PedestalBlock extends QUBlock<PedestalTE, PedestalContainer> {
         }
         return true;
     }
+
+    @Override
+    protected int getRedstoneOutput(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+//        EnumFacing direction = state.getValue(FACING);
+        switch (side) {
+            case DOWN:
+            case UP:
+                break;
+            case NORTH:
+            case SOUTH:
+            case WEST:
+            case EAST:
+                TileEntity te = world.getTileEntity(pos);
+                if (state.getBlock() instanceof PedestalBlock && te instanceof PedestalTE) {
+                    PedestalTE pedestal = (PedestalTE) te;
+                    return pedestal.getStackInSlot(PedestalContainer.SLOT_ITEM).isEmpty() ? 0 : 15;
+                }
+                break;
+        }
+        return 0;
+    }
+
 
     @Override
     @SideOnly(Side.CLIENT)

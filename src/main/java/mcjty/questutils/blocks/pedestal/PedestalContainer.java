@@ -5,7 +5,9 @@ import mcjty.lib.container.GenericContainer;
 import mcjty.lib.container.SlotDefinition;
 import mcjty.lib.container.SlotType;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 
 public class PedestalContainer extends GenericContainer {
     public static final String CONTAINER_INVENTORY = "container";
@@ -26,4 +28,12 @@ public class PedestalContainer extends GenericContainer {
         addInventory(ContainerFactory.CONTAINER_PLAYER, player.inventory);
         generateSlots();
     }
+
+    @Override
+    public ItemStack slotClick(int index, int button, ClickType mode, EntityPlayer player) {
+        ItemStack stack = super.slotClick(index, button, mode, player);
+        ((PedestalTE)getInventory(CONTAINER_INVENTORY)).detect();
+        return stack;
+    }
+
 }

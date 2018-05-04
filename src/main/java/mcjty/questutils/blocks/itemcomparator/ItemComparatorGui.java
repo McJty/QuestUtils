@@ -64,10 +64,10 @@ public class ItemComparatorGui extends GenericGuiContainer<ItemComparatorTE> {
         });
 
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout())
-                .addChild(new Label<>(mc, this).setText("ID").setLayoutHint(new PositionalLayout.PositionalHint(12, 6, 16, 14)).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT))
+                .addChild(new Label<>(mc, this).setText("ID").setLayoutHint(new PositionalLayout.PositionalHint(12, 6, 16, 14)).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT))
                 .addChild(idField)
-                .addChild(new Label<>(mc, this).setText("Filter").setLayoutHint(new PositionalLayout.PositionalHint(12, 22, 18*4, 14)).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT))
-                .addChild(new Label<>(mc, this).setText("Buffer").setLayoutHint(new PositionalLayout.PositionalHint(102, 22, 18*4, 14)).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
+                .addChild(new Label<>(mc, this).setText("Filter").setLayoutHint(new PositionalLayout.PositionalHint(12, 22, 18*4, 14)).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT))
+                .addChild(new Label<>(mc, this).setText("Buffer").setLayoutHint(new PositionalLayout.PositionalHint(102, 22, 18*4, 14)).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT));
 //                .addChild(redstoneMode);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 

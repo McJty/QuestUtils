@@ -55,7 +55,7 @@ public class PedestalGui extends GenericGuiContainer<PedestalTE> {
         modeChoice.addChoiceEvent((parent, newChoice) -> updateMode());
 
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout())
-                .addChild(new Label<>(mc, this).setText("ID").setLayoutHint(new PositionalLayout.PositionalHint(12, 6, 16, 14)).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT))
+                .addChild(new Label<>(mc, this).setText("ID").setLayoutHint(new PositionalLayout.PositionalHint(12, 6, 16, 14)).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT))
                 .addChild(idField).addChild(modeChoice);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 

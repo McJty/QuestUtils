@@ -99,18 +99,18 @@ public class ScreenGui extends GenericGuiContainer<ScreenTE> {
         Panel status2Panel = getStringPanel("Stat2", "status2", tileEntity.getStatus()[2]).setLayoutHint(new PositionalLayout.PositionalHint(0, 118, WIDTH, 14));
 
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout())
-                .addChild(new Label<>(mc, this).setText("ID").setLayoutHint(new PositionalLayout.PositionalHint(12, 6, 26, 14)).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT))
+                .addChild(new Label<>(mc, this).setText("ID").setLayoutHint(new PositionalLayout.PositionalHint(12, 6, 26, 14)).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT))
                 .addChild(idField)
                 .addChild(iconField)
                 .addChild(new Label<>(mc, this)
                         .setText("Icon")
                         .setLayoutHint(new PositionalLayout.PositionalHint(12, 44, 26, 14))
-                        .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT))
+                        .setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT))
                 .addChild(fileField)
                 .addChild(new Label<>(mc, this)
                         .setText("File")
                         .setLayoutHint(new PositionalLayout.PositionalHint(12, 60, 26, 14))
-                        .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT))
+                        .setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT))
                 .addChild(borderColor)
                 .addChild(screenColor)
                 .addChild(transp)
@@ -132,7 +132,7 @@ public class ScreenGui extends GenericGuiContainer<ScreenTE> {
         panel.addChild(new Label<>(mc, this)
                 .setText(label)
                 .setLayoutHint(new PositionalLayout.PositionalHint(12, 0, 26, 14))
-                .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
+                .setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT));
 
         TextField fld = new TextField(mc, this)
                 .setLayoutHint(new PositionalLayout.PositionalHint(40, 0, 144, 14));

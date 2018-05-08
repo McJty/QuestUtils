@@ -3,21 +3,14 @@ package mcjty.questutils.blocks.itemcomparator;
 import com.google.gson.JsonObject;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
-import mcjty.lib.network.Argument;
-import mcjty.lib.varia.RedstoneMode;
 import mcjty.questutils.blocks.QUTileEntity;
 import mcjty.questutils.json.JsonTools;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 
-import java.util.Map;
-
 public class ItemComparatorTE extends QUTileEntity implements DefaultSidedInventory {
-
-    public static final String CMD_RSMODE = "rsMode";
 
     private static int[] slots = null;
     private boolean inAlarm = false;
@@ -183,21 +176,6 @@ public class ItemComparatorTE extends QUTileEntity implements DefaultSidedInvent
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound, inventoryHelper);
-    }
-
-    @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
-        boolean rc = super.execute(playerMP, command, args);
-        if (rc) {
-            return true;
-        }
-        if (CMD_RSMODE.equals(command)) {
-            String m = args.get("rs").getString();
-            setRSMode(RedstoneMode.getMode(m));
-            return true;
-        }
-
-        return false;
     }
 
     @Override

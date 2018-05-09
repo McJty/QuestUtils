@@ -2,24 +2,31 @@ package mcjty.questutils.blocks;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import mcjty.lib.entity.DefaultValue;
 import mcjty.lib.entity.GenericTileEntity;
-import mcjty.lib.network.Argument;
+import mcjty.lib.entity.IValue;
+import mcjty.lib.typed.Key;
+import mcjty.lib.typed.Type;
 import mcjty.questutils.data.QUData;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import java.util.Map;
-
 public class QUTileEntity extends GenericTileEntity {
 
-    public static final String CMD_SETID = "cmdSetId";
-
     private String identifier;
+
+    public static final Key<String> VALUE_ID = new Key<>("id", Type.STRING);
+
+    @Override
+    public IValue[] getValues() {
+        return new IValue[] {
+                new DefaultValue<>(VALUE_ID, QUTileEntity::getIdentifier, QUTileEntity::setIdentifier),
+        };
+    }
 
     public String getIdentifier() {
         return identifier;
@@ -81,22 +88,6 @@ public class QUTileEntity extends GenericTileEntity {
             tagCompound.setString("quid", identifier);
         }
     }
-
-    @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
-        boolean rc = super.execute(playerMP, command, args);
-        if (rc) {
-            return true;
-        }
-        if (CMD_SETID.equals(command)) {
-            String id = args.get("id").getString();
-            setIdentifier(id);
-            return true;
-        }
-
-        return false;
-    }
-
 
     public void writeToJson(JsonObject object) {
         if (hasIdentifier()) {

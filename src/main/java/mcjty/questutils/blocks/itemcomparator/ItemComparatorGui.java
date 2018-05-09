@@ -1,7 +1,6 @@
 package mcjty.questutils.blocks.itemcomparator;
 
 import mcjty.lib.container.GenericGuiContainer;
-import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.PositionalLayout;
@@ -9,21 +8,18 @@ import mcjty.lib.gui.widgets.ImageChoiceLabel;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
-import mcjty.lib.network.Argument;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.questutils.QuestUtils;
 import mcjty.questutils.blocks.QUTileEntity;
 import mcjty.questutils.network.QuestUtilsMessages;
 import net.minecraft.util.ResourceLocation;
 
-import java.awt.*;
+import java.awt.Rectangle;
 
 public class ItemComparatorGui extends GenericGuiContainer<ItemComparatorTE> {
 
     public static final int WIDTH = 183;
     public static final int HEIGHT = 238;
-
-    private TextField idField;
 
     private static final ResourceLocation iconLocation = new ResourceLocation(QuestUtils.MODID, "textures/gui/item_comparator.png");
     private static final ResourceLocation iconGuiElements = new ResourceLocation(QuestUtils.MODID, "textures/gui/guielements.png");
@@ -51,12 +47,9 @@ public class ItemComparatorGui extends GenericGuiContainer<ItemComparatorTE> {
 
 //        initRedstoneMode();
 
-        idField = new TextField(mc, this)
+        TextField idField = new TextField(mc, this)
+                .setName("id")
                 .setLayoutHint(new PositionalLayout.PositionalHint(30, 6, 143, 14));
-        idField.setText(tileEntity.getIdentifier() == null ? "" : tileEntity.getIdentifier());
-        idField.addTextEvent((parent, newText) -> {
-            updateId();
-        });
 
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout())
                 .addChild(new Label<>(mc, this).setText("ID").setLayoutHint(new PositionalLayout.PositionalHint(12, 6, 16, 14)).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT))
@@ -69,11 +62,7 @@ public class ItemComparatorGui extends GenericGuiContainer<ItemComparatorTE> {
         window = new Window(this, toplevel);
 
 //        window.bind(QuestUtilsMessages.INSTANCE, "redstone", tileEntity, GenericTileEntity.VALUE_RSMODE.getName());
-    }
-
-    private void updateId() {
-        tileEntity.setIdentifier(idField.getText());
-        sendServerCommand(QuestUtilsMessages.INSTANCE, QUTileEntity.CMD_SETID, new Argument("id", idField.getText()));
+        window.bind(QuestUtilsMessages.INSTANCE, "id", tileEntity, QUTileEntity.VALUE_ID.getName());
     }
 
     @Override

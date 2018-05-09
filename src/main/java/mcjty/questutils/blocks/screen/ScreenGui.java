@@ -5,7 +5,8 @@ import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.*;
-import mcjty.lib.network.Argument;
+import mcjty.lib.typed.Key;
+import mcjty.lib.typed.TypedMap;
 import mcjty.questutils.QuestUtils;
 import mcjty.questutils.blocks.QUTileEntity;
 import mcjty.questutils.network.QuestUtilsMessages;
@@ -14,12 +15,13 @@ import net.minecraft.util.ResourceLocation;
 
 import java.awt.Rectangle;
 
+import static mcjty.questutils.blocks.screen.ScreenTE.*;
+
 public class ScreenGui extends GenericGuiContainer<ScreenTE> {
 
     public static final int WIDTH = 243;
     public static final int HEIGHT = 238;
 
-    private TextField idField;
     private TextField iconField;
     private TextField fileField;
     private ColorChoiceLabel borderColor;
@@ -43,12 +45,11 @@ public class ScreenGui extends GenericGuiContainer<ScreenTE> {
     public void initGui() {
         super.initGui();
 
-        idField = new TextField(mc, this)
+        TextField idField = new TextField(mc, this)
+                .setName("id")
                 .setLayoutHint(new PositionalLayout.PositionalHint(40, 6, 173, 14));
-        idField.setText(tileEntity.getIdentifier() == null ? "" : tileEntity.getIdentifier());
-        idField.addTextEvent((parent, newText) -> updateId());
 
-        Panel stringPanel = getStringPanel("Title", "title", tileEntity.getTitle()).setLayoutHint(new PositionalLayout.PositionalHint(0, 22, WIDTH, 14));
+        Panel stringPanel = getStringPanel("Title", PARAM_TITLE, PARAM_TITLE_A, PARAM_TITLE_C, tileEntity.getTitle()).setLayoutHint(new PositionalLayout.PositionalHint(0, 22, WIDTH, 14));
 
         iconField = new TextField(mc, this)
                 .setLayoutHint(new PositionalLayout.PositionalHint(40, 44, 144, 14));
@@ -94,9 +95,9 @@ public class ScreenGui extends GenericGuiContainer<ScreenTE> {
         size.setChoice(SIZES[tileEntity.getSize()]);
         size.addChoiceEvent((parent, newChoice) -> update());
 
-        Panel status0Panel = getStringPanel("Stat0", "status0", tileEntity.getStatus()[0]).setLayoutHint(new PositionalLayout.PositionalHint(0, 82, WIDTH, 14));
-        Panel status1Panel = getStringPanel("Stat1", "status1", tileEntity.getStatus()[1]).setLayoutHint(new PositionalLayout.PositionalHint(0, 100, WIDTH, 14));
-        Panel status2Panel = getStringPanel("Stat2", "status2", tileEntity.getStatus()[2]).setLayoutHint(new PositionalLayout.PositionalHint(0, 118, WIDTH, 14));
+        Panel status0Panel = getStringPanel("Stat0", PARAM_STATUS0, PARAM_STATUS0_A, PARAM_STATUS0_C, tileEntity.getStatus()[0]).setLayoutHint(new PositionalLayout.PositionalHint(0, 82, WIDTH, 14));
+        Panel status1Panel = getStringPanel("Stat1", PARAM_STATUS1, PARAM_STATUS1_A, PARAM_STATUS1_C, tileEntity.getStatus()[1]).setLayoutHint(new PositionalLayout.PositionalHint(0, 100, WIDTH, 14));
+        Panel status2Panel = getStringPanel("Stat2", PARAM_STATUS2, PARAM_STATUS2_A, PARAM_STATUS2_C, tileEntity.getStatus()[2]).setLayoutHint(new PositionalLayout.PositionalHint(0, 118, WIDTH, 14));
 
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout())
                 .addChild(new Label<>(mc, this).setText("ID").setLayoutHint(new PositionalLayout.PositionalHint(12, 6, 26, 14)).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT))
@@ -123,10 +124,12 @@ public class ScreenGui extends GenericGuiContainer<ScreenTE> {
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
+
+        window.bind(QuestUtilsMessages.INSTANCE, "id", tileEntity, QUTileEntity.VALUE_ID.getName());
     }
 
 
-    private Panel getStringPanel(String label, String prefix, ScreenTE.FormattedString string) {
+    private Panel getStringPanel(String label, Key<String> titleKey, Key<Integer> alignKey, Key<Integer> colorKey, ScreenTE.FormattedString string) {
         Panel panel = new Panel(mc, this).setLayout(new PositionalLayout());
 
         panel.addChild(new Label<>(mc, this)
@@ -168,9 +171,9 @@ public class ScreenGui extends GenericGuiContainer<ScreenTE> {
         panel.addChild(choice);
         panel.addChild(colorChoice);
 
-        fld.addTextEvent((parent, newText) -> updateString(prefix, fld.getText(), getAlignment(choice), colorChoice.getCurrentColor()));
-        choice.addChoiceEvent((parent, newChoice) -> updateString(prefix, fld.getText(), getAlignment(choice), colorChoice.getCurrentColor()));
-        colorChoice.addChoiceEvent((parent, newColor) -> updateString(prefix, fld.getText(), getAlignment(choice), colorChoice.getCurrentColor()));
+        fld.addTextEvent((parent, newText) -> updateString(titleKey, alignKey, colorKey, fld.getText(), getAlignment(choice), colorChoice.getCurrentColor()));
+        choice.addChoiceEvent((parent, newChoice) -> updateString(titleKey, alignKey, colorKey, fld.getText(), getAlignment(choice), colorChoice.getCurrentColor()));
+        colorChoice.addChoiceEvent((parent, newColor) -> updateString(titleKey, alignKey, colorKey, fld.getText(), getAlignment(choice), colorChoice.getCurrentColor()));
 
         return panel;
     }
@@ -185,31 +188,29 @@ public class ScreenGui extends GenericGuiContainer<ScreenTE> {
         }
     }
 
-    private void updateId() {
-        tileEntity.setIdentifier(idField.getText());
-        sendServerCommand(QuestUtilsMessages.INSTANCE, QUTileEntity.CMD_SETID,
-                new Argument("id", idField.getText()));
-    }
-
     private void update() {
         sendServerCommand(QuestUtilsMessages.INSTANCE, ScreenTE.CMD_UPDATE,
-                new Argument("color", borderColor.getCurrentColor()),
-                new Argument("screen", screenColor.getCurrentColor()),
-                new Argument("transp", transp.isPressed()),
-                new Argument("size", getSize()),
-                new Argument("icon", iconField.getText()),
-                new Argument("file", fileField.getText()));
+                TypedMap.builder()
+                        .put(PARAM_COLOR, borderColor.getCurrentColor())
+                        .put(PARAM_SCREEN, screenColor.getCurrentColor())
+                        .put(PARAM_TRANSP, transp.isPressed())
+                        .put(PARAM_SIZE, getSize())
+                        .put(PARAM_ICON, iconField.getText())
+                        .put(PARAM_FILE, fileField.getText())
+                        .build());
     }
 
     private int getSize() {
         return size.getCurrentChoice().charAt(0)-'1';
     }
 
-    private void updateString(String prefix, String title, ScreenTE.Alignment alignment, int color) {
+    private void updateString(Key<String> titleKey, Key<Integer> alignKey, Key<Integer> colorKey, String title, ScreenTE.Alignment alignment, int color) {
         sendServerCommand(QuestUtilsMessages.INSTANCE, ScreenTE.CMD_UPDATE_STRING,
-                new Argument(prefix, title),
-                new Argument(prefix+"A", alignment.ordinal()),
-                new Argument(prefix+"C", color));
+                TypedMap.builder()
+                        .put(titleKey, title)
+                        .put(alignKey, alignment.ordinal())
+                        .put(colorKey, color)
+                        .build());
     }
 
     @Override

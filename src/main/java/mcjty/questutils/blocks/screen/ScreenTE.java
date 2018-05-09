@@ -4,8 +4,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
-import mcjty.lib.network.Argument;
-import mcjty.questutils.blocks.ModBlocks;
+import mcjty.lib.entity.DefaultAction;
+import mcjty.lib.entity.IAction;
+import mcjty.lib.typed.Key;
+import mcjty.lib.typed.Type;
+import mcjty.lib.typed.TypedMap;
 import mcjty.questutils.blocks.QUTileEntity;
 import mcjty.questutils.json.JsonTools;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,15 +23,40 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.Map;
-
 public class ScreenTE extends QUTileEntity implements ITickable, DefaultSidedInventory {
 
-    public static final String CMD_CLICK = "click";
-    public static final String CMD_HOVER = "hover";
-    public static final String CMD_SETTRUETYPE = "setTruetype";
-    public static final String CMD_UPDATE = "cmdUpdate";
-    public static final String CMD_UPDATE_STRING = "cmdUpdateString";
+    public static final String ACTION_CLICK = "click";
+    public static final String ACTION_HOVER = "hover";
+
+    public static final String CMD_UPDATE = "screen.cmdUpdate";
+    public static final Key<Integer> PARAM_COLOR = new Key<>("color", Type.INTEGER);
+    public static final Key<Integer> PARAM_SCREEN = new Key<>("screen", Type.INTEGER);
+    public static final Key<Integer> PARAM_SIZE = new Key<>("size", Type.INTEGER);
+    public static final Key<String> PARAM_ICON = new Key<>("icon", Type.STRING);
+    public static final Key<String> PARAM_FILE = new Key<>("file", Type.STRING);
+    public static final Key<Boolean> PARAM_TRANSP = new Key<>("transp", Type.BOOLEAN);
+
+    public static final String CMD_UPDATE_STRING = "screen.cmdUpdateString";
+    public static final Key<String> PARAM_TITLE = new Key<>("title", Type.STRING);
+    public static final Key<Integer> PARAM_TITLE_A = new Key<>("titleA", Type.INTEGER);
+    public static final Key<Integer> PARAM_TITLE_C = new Key<>("titleC", Type.INTEGER);
+    public static final Key<String> PARAM_STATUS0 = new Key<>("status0", Type.STRING);
+    public static final Key<Integer> PARAM_STATUS0_A = new Key<>("status0A", Type.INTEGER);
+    public static final Key<Integer> PARAM_STATUS0_C = new Key<>("status0C", Type.INTEGER);
+    public static final Key<String> PARAM_STATUS1 = new Key<>("status1", Type.STRING);
+    public static final Key<Integer> PARAM_STATUS1_A = new Key<>("status1A", Type.INTEGER);
+    public static final Key<Integer> PARAM_STATUS1_C = new Key<>("status1C", Type.INTEGER);
+    public static final Key<String> PARAM_STATUS2 = new Key<>("status2", Type.STRING);
+    public static final Key<Integer> PARAM_STATUS2_A = new Key<>("status2A", Type.INTEGER);
+    public static final Key<Integer> PARAM_STATUS2_C = new Key<>("status2C", Type.INTEGER);
+
+    @Override
+    public IAction[] getActions() {
+        return new IAction[] {
+                new DefaultAction<>(ACTION_CLICK, o -> {}),
+                new DefaultAction<>(ACTION_HOVER, o -> {}),
+        };
+    }
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, ScreenContainer.factory, 9);
     private FormattedString title;
@@ -302,51 +330,40 @@ public class ScreenTE extends QUTileEntity implements ITickable, DefaultSidedInv
     }
 
     @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
-        boolean rc = super.execute(playerMP, command, args);
+    public boolean execute(EntityPlayerMP playerMP, String command, TypedMap params) {
+        boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;
         }
         if (CMD_UPDATE.equals(command)) {
-            Integer color = args.get("color").getInteger();
+            Integer color = params.get(PARAM_COLOR);
             setBorderColor(color);
-            Integer screen = args.get("screen").getInteger();
+            Integer screen = params.get(PARAM_SCREEN);
             setColor(screen);
-            String iconString = args.get("icon").getString();
-            String fileName = args.get("file").getString();
-            boolean transp = args.get("transp").getBoolean();
+            String iconString = params.get(PARAM_ICON);
+            String fileName = params.get(PARAM_FILE);
+            boolean transp = params.get(PARAM_TRANSP);
             setTransparent(transp);
-            int s = args.get("size").getInteger();
+            int s = params.get(PARAM_SIZE);
             setSize(s);
             setIcon(iconString.trim().isEmpty() ? null : new ResourceLocation(iconString),
                     fileName.trim().isEmpty() ? null : fileName);
             markDirtyClient();
             return true;
         } else if (CMD_UPDATE_STRING.equals(command)) {
-            if (args.containsKey("title")) {
-                setTitle(args.get("title").getString(), Alignment.values()[args.get("titleA").getInteger()], args.get("titleC").getInteger());
+            if (params.get(PARAM_TITLE) != null) {
+                setTitle(params.get(PARAM_TITLE), Alignment.values()[params.get(PARAM_TITLE_A)], params.get(PARAM_TITLE_C));
             }
-            if (args.containsKey("status0")) {
-                setStatus(0, args.get("status0").getString(), Alignment.values()[args.get("status0A").getInteger()], args.get("status0C").getInteger());
+            if (params.get(PARAM_STATUS0) != null) {
+                setStatus(0, params.get(PARAM_STATUS0), Alignment.values()[params.get(PARAM_STATUS0_A)], params.get(PARAM_STATUS0_C));
             }
-            if (args.containsKey("status1")) {
-                setStatus(1, args.get("status1").getString(), Alignment.values()[args.get("status1A").getInteger()], args.get("status1C").getInteger());
+            if (params.get(PARAM_STATUS1) != null) {
+                setStatus(1, params.get(PARAM_STATUS1), Alignment.values()[params.get(PARAM_STATUS1_A)], params.get(PARAM_STATUS1_C));
             }
-            if (args.containsKey("status2")) {
-                setStatus(2, args.get("status2").getString(), Alignment.values()[args.get("status2A").getInteger()], args.get("status2C").getInteger());
+            if (params.get(PARAM_STATUS2) != null) {
+                setStatus(2, params.get(PARAM_STATUS2), Alignment.values()[params.get(PARAM_STATUS2_A)], params.get(PARAM_STATUS2_C));
             }
             markDirtyClient();
-            return true;
-        } else if (CMD_CLICK.equals(command)) {
-//            int x = args.get("x").getInteger();
-//            int y = args.get("y").getInteger();
-//            int module = args.get("module").getInteger();
-            return true;
-        } else if (CMD_HOVER.equals(command)) {
-            return true;
-        } else if (CMD_SETTRUETYPE.equals(command)) {
-            int b = args.get("b").getInteger();
-            setTrueTypeMode(b);
             return true;
         }
         return false;

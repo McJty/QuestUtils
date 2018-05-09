@@ -3,27 +3,34 @@ package mcjty.questutils.blocks.pedestal;
 import com.google.gson.JsonObject;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
-import mcjty.lib.network.Argument;
+import mcjty.lib.entity.DefaultValue;
+import mcjty.lib.entity.IValue;
+import mcjty.lib.typed.Key;
+import mcjty.lib.typed.Type;
 import mcjty.questutils.blocks.QUTileEntity;
 import mcjty.questutils.json.JsonTools;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 
-import java.util.Map;
-
 public class PedestalTE extends QUTileEntity implements DefaultSidedInventory {
-
-    public static final String CMD_SETMODE = "cmdSetMode";
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, PedestalContainer.factory, 1);
     private static int[] slots = null;
     private boolean inAlarm = false;
 
     private PedestalMode mode = PedestalMode.MODE_DISPLAY;
+
+    public static final Key<Integer> VALUE_MODE = new Key<>("mode", Type.INTEGER);
+
+    @Override
+    public IValue[] getValues() {
+        return new IValue[] {
+                new DefaultValue<>(VALUE_MODE, te -> ((PedestalTE)te).getMode().ordinal(), (te,v) -> ((PedestalTE)te).setMode(PedestalMode.values()[v])),
+        };
+    }
 
     public void interactItem(EntityPlayer player, EnumHand hand) {
         if (player.getHeldItem(hand).isEmpty()) {
@@ -171,20 +178,4 @@ public class PedestalTE extends QUTileEntity implements DefaultSidedInventory {
             detect();
         }
     }
-
-    @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
-        boolean rc = super.execute(playerMP, command, args);
-        if (rc) {
-            return true;
-        }
-        if (CMD_SETMODE.equals(command)) {
-            String m = args.get("mode").getString();
-            setMode(PedestalMode.getModeByName(m));
-            return true;
-        }
-
-        return false;
-    }
-
 }

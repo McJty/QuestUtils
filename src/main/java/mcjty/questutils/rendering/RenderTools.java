@@ -33,7 +33,7 @@ public class RenderTools {
         f3 = 0.002965f;
         GlStateManager.translate(-0.5F, 0.5F, 0.06F);
         GlStateManager.scale(f3 * factor, -f3 * factor, 0.0001f);
-        mcjty.lib.gui.RenderHelper.drawTexturedModalRect(x+97, y+82, 0, 0, 128, 128, 128, 128);
+        mcjty.lib.client.RenderHelper.drawTexturedModalRect(x+97, y+82, 0, 0, 128, 128, 128, 128);
         GlStateManager.popMatrix();
 
         GlStateManager.disableLighting();

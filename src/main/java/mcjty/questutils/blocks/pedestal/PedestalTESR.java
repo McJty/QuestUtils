@@ -16,7 +16,7 @@ public class PedestalTESR extends TileEntitySpecialRenderer<PedestalTE> {
         GlStateManager.pushAttrib();
         GlStateManager.pushMatrix();
 
-        // Translate to the location of our tile bindings
+        // Translate to the location of our tile entity
         GlStateManager.translate(x, y, z);
         GlStateManager.disableRescaleNormal();
 

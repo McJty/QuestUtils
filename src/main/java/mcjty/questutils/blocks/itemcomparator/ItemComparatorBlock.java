@@ -1,6 +1,6 @@
 package mcjty.questutils.blocks.itemcomparator;
 
-import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.questutils.blocks.QUBlock;
 import mcjty.questutils.proxy.GuiProxy;
 import net.minecraft.block.state.IBlockState;

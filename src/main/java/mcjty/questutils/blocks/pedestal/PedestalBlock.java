@@ -1,9 +1,7 @@
 package mcjty.questutils.blocks.pedestal;
 
-import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.questutils.blocks.QUBlock;
-import mcjty.questutils.blocks.itemcomparator.ItemComparatorBlock;
-import mcjty.questutils.blocks.itemcomparator.ItemComparatorTE;
 import mcjty.questutils.items.ModItems;
 import mcjty.questutils.proxy.GuiProxy;
 import net.minecraft.block.state.IBlockState;

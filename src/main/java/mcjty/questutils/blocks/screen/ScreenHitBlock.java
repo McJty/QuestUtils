@@ -1,8 +1,8 @@
 package mcjty.questutils.blocks.screen;
 
-import mcjty.lib.container.BaseBlock;
+import mcjty.lib.blocks.BaseBlock;
 import mcjty.lib.container.EmptyContainer;
-import mcjty.lib.container.GenericBlock;
+import mcjty.lib.blocks.GenericBlock;
 import mcjty.questutils.QuestUtils;
 import mcjty.questutils.blocks.ModBlocks;
 import mcjty.theoneprobe.api.IProbeHitData;

@@ -1,6 +1,6 @@
 package mcjty.questutils.blocks;
 
-import mcjty.lib.container.GenericBlock;
+import mcjty.lib.blocks.GenericBlock;
 import mcjty.questutils.QuestUtils;
 import mcjty.questutils.items.ModItems;
 import mcjty.theoneprobe.api.IProbeHitData;

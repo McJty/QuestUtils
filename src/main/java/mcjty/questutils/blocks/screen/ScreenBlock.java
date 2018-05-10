@@ -1,6 +1,6 @@
 package mcjty.questutils.blocks.screen;
 
-import mcjty.lib.container.BaseBlock;
+import mcjty.lib.blocks.BaseBlock;
 import mcjty.questutils.blocks.ModBlocks;
 import mcjty.questutils.blocks.QUBlock;
 import mcjty.questutils.proxy.GuiProxy;

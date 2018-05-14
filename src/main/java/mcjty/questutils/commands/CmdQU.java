@@ -1,10 +1,10 @@
 package mcjty.questutils.commands;
 
 import mcjty.lib.varia.BlockPosTools;
+import mcjty.questutils.QuestUtils;
 import mcjty.questutils.data.QUData;
 import mcjty.questutils.data.QUEntry;
 import mcjty.questutils.json.JsonPersistance;
-import mcjty.questutils.proxy.CommonProxy;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -67,14 +67,14 @@ public class CmdQU extends CommandBase {
 
     private static void save(ICommandSender sender, String[] args) {
         String filename = args[1];
-        File file = new File(CommonProxy.modConfigDir.getPath(), filename);
+        File file = new File(QuestUtils.proxy.modConfigDir.getPath(), filename);
         Predicate<String> matcher = getMatcher(args, 2);
         JsonPersistance.write(file, matcher);
     }
 
     private static void load(ICommandSender sender, String[] args) {
         String filename = args[1];
-        File file = new File(CommonProxy.modConfigDir.getPath(), filename);
+        File file = new File(QuestUtils.proxy.modConfigDir.getPath(), filename);
         if (!file.exists()) {
             sender.sendMessage(new TextComponentString(TextFormatting.RED + "Cannot load file!"));
             return;

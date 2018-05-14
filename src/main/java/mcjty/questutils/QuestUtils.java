@@ -3,7 +3,6 @@ package mcjty.questutils;
 
 import mcjty.lib.base.ModBase;
 import mcjty.questutils.commands.CmdQU;
-import mcjty.questutils.data.QUData;
 import mcjty.questutils.integration.computers.OpenComputersIntegration;
 import mcjty.questutils.proxy.CommonProxy;
 import net.minecraft.creativetab.CreativeTabs;
@@ -13,7 +12,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.*;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import org.apache.logging.log4j.Logger;
 
 @Mod(modid = QuestUtils.MODID, name = QuestUtils.MODNAME,
@@ -67,11 +69,6 @@ public class QuestUtils implements ModBase {
     @Mod.EventHandler
     public void serverLoad(FMLServerStartingEvent event) {
         event.registerServerCommand(new CmdQU());
-    }
-
-    @Mod.EventHandler
-    public void serverStopped(FMLServerStoppedEvent event) {
-        QUData.clearInstance();
     }
 
     @Override

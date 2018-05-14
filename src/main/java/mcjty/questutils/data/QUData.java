@@ -1,54 +1,34 @@
 package mcjty.questutils.data;
 
+import mcjty.lib.worlddata.AbstractWorldData;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.WorldServer;
-import net.minecraft.world.storage.WorldSavedData;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class QUData extends WorldSavedData {
+public class QUData extends AbstractWorldData<QUData> {
 
-    public static final String NAME = "QUData";
-    private static QUData instance = null;
+    private static final String NAME = "QUData";
 
     private Map<String, QUEntry> entries = new HashMap<>();
     private Map<Pair<Integer, BlockPos>, QUEntry> entriesByPosition = new HashMap<>();
-
 
     public QUData(String name) {
         super(name);
     }
 
-    public void save() {
-        WorldServer world = DimensionManager.getWorld(0);
-        world.setData(NAME, this);
-        markDirty();
-    }
-
-    public static void clearInstance() {
-        if (instance != null) {
-            instance.entries.clear();
-            instance.entriesByPosition.clear();
-            instance = null;
-        }
+    @Override
+    public void clear() {
+        entries.clear();
+        entriesByPosition.clear();
     }
 
     public static QUData getData() {
-        if (instance != null) {
-            return instance;
-        }
-        WorldServer world = DimensionManager.getWorld(0);
-        instance = (QUData) world.loadData(QUData.class, NAME);
-        if (instance == null) {
-            instance = new QUData(NAME);
-        }
-        return instance;
+        return getData(QUData.class, NAME);
     }
 
     public Map<String, QUEntry> getEntries() {

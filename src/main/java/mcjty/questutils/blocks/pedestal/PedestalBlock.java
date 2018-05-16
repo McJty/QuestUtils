@@ -20,7 +20,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class PedestalBlock extends QUBlock<PedestalTE, PedestalContainer> {
 
     public PedestalBlock() {
-        super(PedestalTE.class, PedestalContainer.class, "pedestal");
+        super(PedestalTE.class, PedestalContainer::new, "pedestal");
     }
 
     @Override

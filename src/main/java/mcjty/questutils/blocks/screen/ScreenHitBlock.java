@@ -1,8 +1,8 @@
 package mcjty.questutils.blocks.screen;
 
 import mcjty.lib.blocks.BaseBlock;
-import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.blocks.GenericBlock;
+import mcjty.lib.container.EmptyContainer;
 import mcjty.questutils.QuestUtils;
 import mcjty.questutils.blocks.ModBlocks;
 import mcjty.theoneprobe.api.IProbeHitData;
@@ -42,7 +42,7 @@ import java.util.Random;
 public class ScreenHitBlock extends GenericBlock<ScreenHitTE, EmptyContainer> {
 
     public ScreenHitBlock() {
-        super(QuestUtils.instance, Material.GLASS, ScreenHitTE.class, EmptyContainer.class, null, "screen_hitblock", false);
+        super(QuestUtils.instance, Material.GLASS, ScreenHitTE.class, EmptyContainer::new, null, "screen_hitblock", false);
         setBlockUnbreakable();
         setResistance(6000000.0F);
     }

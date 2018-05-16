@@ -14,7 +14,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class ItemComparatorBlock extends QUBlock<ItemComparatorTE, ItemComparatorContainer> {
 
     public ItemComparatorBlock() {
-        super(ItemComparatorTE.class, ItemComparatorContainer.class, "item_comparator");
+        super(ItemComparatorTE.class, ItemComparatorContainer::new, "item_comparator");
     }
 
     @Override

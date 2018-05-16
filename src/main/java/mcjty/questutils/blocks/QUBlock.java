@@ -11,14 +11,17 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Optional;
 
+import java.util.function.BiFunction;
+
 public abstract class QUBlock <T extends QUTileEntity, C extends Container> extends GenericBlock<T, C> {
 
-    public QUBlock(Class<? extends T> tileEntityClass, Class<? extends C> containerClass, String name) {
-        super(QuestUtils.instance, Material.IRON, tileEntityClass, containerClass, name, true);
+    public QUBlock(Class<? extends T> tileEntityClass, BiFunction<EntityPlayer, IInventory, C> containerFactory, String name) {
+        super(QuestUtils.instance, Material.IRON, tileEntityClass, containerFactory, name, true);
     }
 
     @Override

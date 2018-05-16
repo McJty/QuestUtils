@@ -44,7 +44,7 @@ public class ScreenBlock extends QUBlock<ScreenTE, ScreenContainer> {
     public static final PropertyDirection HORIZONTAL_FACING = PropertyDirection.create("horizontal_facing", EnumFacing.Plane.HORIZONTAL);
 
     public ScreenBlock() {
-        super(ScreenTE.class, ScreenContainer.class, "screen");
+        super(ScreenTE.class, ScreenContainer::new, "screen");
     }
 
     @Override

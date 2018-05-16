@@ -100,15 +100,15 @@ public class ScreenGui extends GenericGuiContainer<ScreenTE> {
         Panel status2Panel = getStringPanel("Stat2", PARAM_STATUS2, PARAM_STATUS2_A, PARAM_STATUS2_C, tileEntity.getStatus()[2]).setLayoutHint(new PositionalLayout.PositionalHint(0, 118, WIDTH, 14));
 
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout())
-                .addChild(new Label<>(mc, this).setText("ID").setLayoutHint(new PositionalLayout.PositionalHint(12, 6, 26, 14)).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT))
+                .addChild(new Label(mc, this).setText("ID").setLayoutHint(new PositionalLayout.PositionalHint(12, 6, 26, 14)).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT))
                 .addChild(idField)
                 .addChild(iconField)
-                .addChild(new Label<>(mc, this)
+                .addChild(new Label(mc, this)
                         .setText("Icon")
                         .setLayoutHint(new PositionalLayout.PositionalHint(12, 44, 26, 14))
                         .setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT))
                 .addChild(fileField)
-                .addChild(new Label<>(mc, this)
+                .addChild(new Label(mc, this)
                         .setText("File")
                         .setLayoutHint(new PositionalLayout.PositionalHint(12, 60, 26, 14))
                         .setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT))
@@ -132,7 +132,7 @@ public class ScreenGui extends GenericGuiContainer<ScreenTE> {
     private Panel getStringPanel(String label, Key<String> titleKey, Key<Integer> alignKey, Key<Integer> colorKey, ScreenTE.FormattedString string) {
         Panel panel = new Panel(mc, this).setLayout(new PositionalLayout());
 
-        panel.addChild(new Label<>(mc, this)
+        panel.addChild(new Label(mc, this)
                 .setText(label)
                 .setLayoutHint(new PositionalLayout.PositionalHint(12, 0, 26, 14))
                 .setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT));

@@ -34,7 +34,7 @@ public class ItemComparatorBlock extends QUBlock<ItemComparatorTE, ItemComparato
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<? extends GenericGuiContainer<ItemComparatorTE>> getGuiClass() {
         return ItemComparatorGui.class;
     }
 

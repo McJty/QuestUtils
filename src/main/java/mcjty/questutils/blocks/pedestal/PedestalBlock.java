@@ -41,7 +41,7 @@ public class PedestalBlock extends QUBlock<PedestalTE, PedestalContainer> {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<? extends GenericGuiContainer<PedestalTE>> getGuiClass() {
         return PedestalGui.class;
     }
 

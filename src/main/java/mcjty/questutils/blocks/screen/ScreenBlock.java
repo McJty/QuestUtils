@@ -1,6 +1,7 @@
 package mcjty.questutils.blocks.screen;
 
 import mcjty.lib.blocks.BaseBlock;
+import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.questutils.blocks.ModBlocks;
 import mcjty.questutils.blocks.QUBlock;
 import mcjty.questutils.proxy.GuiProxy;
@@ -38,6 +39,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.BiFunction;
 
 public class ScreenBlock extends QUBlock<ScreenTE, ScreenContainer> {
 
@@ -329,8 +331,8 @@ public class ScreenBlock extends QUBlock<ScreenTE, ScreenContainer> {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<ScreenGui> getGuiClass() {
-        return ScreenGui.class;
+    public BiFunction<ScreenTE, ScreenContainer, GenericGuiContainer<? super ScreenTE>> getGuiFactory() {
+        return ScreenGui::new;
     }
 
     @SideOnly(Side.CLIENT)

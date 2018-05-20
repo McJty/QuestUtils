@@ -11,6 +11,8 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.function.BiFunction;
+
 public class ItemComparatorBlock extends QUBlock<ItemComparatorTE, ItemComparatorContainer> {
 
     public ItemComparatorBlock() {
@@ -34,8 +36,8 @@ public class ItemComparatorBlock extends QUBlock<ItemComparatorTE, ItemComparato
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer<ItemComparatorTE>> getGuiClass() {
-        return ItemComparatorGui.class;
+    public BiFunction<ItemComparatorTE, ItemComparatorContainer, GenericGuiContainer<? super ItemComparatorTE>> getGuiFactory() {
+        return ItemComparatorGui::new;
     }
 
     @Override

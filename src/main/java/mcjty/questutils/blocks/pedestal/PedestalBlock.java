@@ -17,6 +17,8 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.function.BiFunction;
+
 public class PedestalBlock extends QUBlock<PedestalTE, PedestalContainer> {
 
     public PedestalBlock() {
@@ -41,10 +43,9 @@ public class PedestalBlock extends QUBlock<PedestalTE, PedestalContainer> {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer<PedestalTE>> getGuiClass() {
-        return PedestalGui.class;
+    public BiFunction<PedestalTE, PedestalContainer, GenericGuiContainer<? super PedestalTE>> getGuiFactory() {
+        return PedestalGui::new;
     }
-
 
     @Override
     @SideOnly(Side.CLIENT)

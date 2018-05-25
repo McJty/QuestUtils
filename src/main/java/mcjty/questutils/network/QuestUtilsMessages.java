@@ -9,9 +9,9 @@ public class QuestUtilsMessages {
         INSTANCE = net;
 
         // Server side
-//        net.registerMessage(PacketGetGridStatus.Handler.class, PacketGetGridStatus.class, PacketHandler.nextID(), Side.SERVER);
+//        net.registerMessage(PacketGetGridStatus.Handler.class, PacketGetGridStatus.class, PacketHandler.nextPacketID(), Side.SERVER);
 
         // Client side
-//        net.registerMessage(PacketReturnGridStatus.Handler.class, PacketReturnGridStatus.class, PacketHandler.nextID(), Side.CLIENT);
+//        net.registerMessage(PacketReturnGridStatus.Handler.class, PacketReturnGridStatus.class, PacketHandler.nextPacketID(), Side.CLIENT);
     }
 }

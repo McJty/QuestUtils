@@ -27,8 +27,8 @@ public class QuestUtils implements ModBase {
 
     public static final String MODID = "questutils";
     public static final String MODNAME = "QuestUtils";
-    public static final String MODVERSION = "0.0.4";
-    public static final String MIN_MCJTYLIB_VER = "2.6.3";
+    public static final String MODVERSION = "0.1.0alpha";
+    public static final String MIN_MCJTYLIB_VER = "3.0.0";
 
     public static final String MIN_FORGE_VER = "13.19.0.2176";
 

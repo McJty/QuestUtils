@@ -2,10 +2,10 @@ package mcjty.questutils.blocks.screen;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import mcjty.lib.container.DefaultSidedInventory;
-import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.bindings.DefaultAction;
 import mcjty.lib.bindings.IAction;
+import mcjty.lib.container.DefaultSidedInventory;
+import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
@@ -53,8 +53,8 @@ public class ScreenTE extends QUTileEntity implements ITickable, DefaultSidedInv
     @Override
     public IAction[] getActions() {
         return new IAction[] {
-                new DefaultAction<>(ACTION_CLICK, o -> {}),
-                new DefaultAction<>(ACTION_HOVER, o -> {}),
+                new DefaultAction(ACTION_CLICK, () -> {}),
+                new DefaultAction(ACTION_HOVER, () -> {}),
         };
     }
 

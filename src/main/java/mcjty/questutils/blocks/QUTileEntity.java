@@ -3,8 +3,8 @@ package mcjty.questutils.blocks;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import mcjty.lib.bindings.DefaultValue;
-import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.bindings.IValue;
+import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.questutils.data.QUData;
@@ -22,9 +22,9 @@ public class QUTileEntity extends GenericTileEntity {
     public static final Key<String> VALUE_ID = new Key<>("id", Type.STRING);
 
     @Override
-    public IValue[] getValues() {
+    public IValue<?>[] getValues() {
         return new IValue[] {
-                new DefaultValue<>(VALUE_ID, QUTileEntity::getIdentifier, QUTileEntity::setIdentifier),
+                new DefaultValue<>(VALUE_ID, this::getIdentifier, this::setIdentifier),
         };
     }
 

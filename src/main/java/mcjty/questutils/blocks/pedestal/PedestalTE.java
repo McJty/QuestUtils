@@ -1,10 +1,10 @@
 package mcjty.questutils.blocks.pedestal;
 
 import com.google.gson.JsonObject;
-import mcjty.lib.container.DefaultSidedInventory;
-import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.bindings.DefaultValue;
 import mcjty.lib.bindings.IValue;
+import mcjty.lib.container.DefaultSidedInventory;
+import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.questutils.blocks.QUTileEntity;
@@ -26,9 +26,9 @@ public class PedestalTE extends QUTileEntity implements DefaultSidedInventory {
     public static final Key<Integer> VALUE_MODE = new Key<>("mode", Type.INTEGER);
 
     @Override
-    public IValue[] getValues() {
+    public IValue<?>[] getValues() {
         return new IValue[] {
-                new DefaultValue<>(VALUE_MODE, te -> ((PedestalTE)te).getMode().ordinal(), (te,v) -> ((PedestalTE)te).setMode(PedestalMode.values()[v])),
+                new DefaultValue<>(VALUE_MODE, () -> this.getMode().ordinal(), (v) -> this.setMode(PedestalMode.values()[v])),
         };
     }
 

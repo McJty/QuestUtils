@@ -9,6 +9,10 @@ import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
+import mcjty.questutils.api.FormattedString;
+import mcjty.questutils.api.IScreen;
+import mcjty.questutils.api.ScreenSize;
+import mcjty.questutils.api.TextAlignment;
 import mcjty.questutils.blocks.QUTileEntity;
 import mcjty.questutils.json.JsonTools;
 import net.minecraft.entity.player.EntityPlayer;
@@ -17,13 +21,16 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 
-public class ScreenTE extends QUTileEntity implements ITickable, DefaultSidedInventory {
+public class ScreenTE extends QUTileEntity implements DefaultSidedInventory, IScreen {
 
     public static final String ACTION_CLICK = "click";
     public static final String ACTION_HOVER = "hover";
@@ -64,48 +71,12 @@ public class ScreenTE extends QUTileEntity implements ITickable, DefaultSidedInv
     private ResourceLocation icon;
     private String filename;
 
-    private int size = 0;                   // Size of screen (0 is normal, 1 is large, 2 is huge)
+    private ScreenSize size = ScreenSize.NORMAL;
     private boolean transparent = false;    // Transparent screen.
     private int color = 0;                  // Color of the screen.
     private int borderColor = EnumDyeColor.BROWN.getColorValue();
 
     private int trueTypeMode = 0;           // 0 is default, -1 is disabled, 1 is truetype
-
-    public static final int SIZE_NORMAL = 0;
-    public static final int SIZE_LARGE = 1;
-    public static final int SIZE_HUGE = 2;
-    public static final int SIZE_ENOURMOUS = 3;
-    public static final int SIZE_GIGANTIC = 4;
-
-    public static class FormattedString {
-        private final String text;
-        private final Alignment alignment;
-        private final int color;
-
-        public FormattedString(String text, Alignment alignment, int color) {
-            this.text = text;
-            this.alignment = alignment;
-            this.color = color;
-        }
-
-        public String getText() {
-            return text;
-        }
-
-        public Alignment getAlignment() {
-            return alignment;
-        }
-
-        public int getColor() {
-            return color;
-        }
-    }
-
-    public static enum Alignment {
-        LEFT,
-        CENTER,
-        RIGHT
-    }
 
     public ScreenTE() {
     }
@@ -115,52 +86,68 @@ public class ScreenTE extends QUTileEntity implements ITickable, DefaultSidedInv
         return true;
     }
 
+    @Override
+    public String getID() {
+        return getIdentifier();
+    }
+
     @SideOnly(Side.CLIENT)
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
         int xCoord = getPos().getX();
         int yCoord = getPos().getY();
         int zCoord = getPos().getZ();
-        return new AxisAlignedBB(xCoord - size - 1, yCoord - size - 1, zCoord - size - 1, xCoord + size + 1, yCoord + size + 1, zCoord + size + 1); // TODO see if we can shrink this
+        int s = size.ordinal();
+        return new AxisAlignedBB(xCoord - s - 1, yCoord - s - 1, zCoord - s - 1, xCoord + s + 1, yCoord + s + 1, zCoord + s + 1); // TODO see if we can shrink this
     }
 
     @Override
-    public void update() {
-        if (getWorld().isRemote) {
-            checkStateClient();
-        } else {
-            checkStateServer();
-        }
-    }
-
     public ResourceLocation getIcon() {
         return icon;
     }
 
+    @Override
     public String getFilename() {
         return filename;
     }
 
+    @Override
     public void setIcon(ResourceLocation icon, String filename) {
         this.icon = icon;
         this.filename = ((filename == null) || filename.trim().isEmpty()) ? null : filename;
         markDirtyClient();
     }
 
-    public void setTitle(String title, Alignment alignment, int color) {
+    @Override
+    public void setTitle(String title, TextAlignment alignment, int color) {
         this.title = ((title == null) || title.trim().isEmpty()) ? null : new FormattedString(title, alignment, color);
         markDirtyClient();
     }
 
-    public void setStatus(int idx, String status, Alignment alignment, int color) {
+    @Override
+    public void setTitle(FormattedString title) {
+        this.title = title;
+        markDirtyClient();
+    }
+
+    @Override
+    public void setStatus(int idx, String status, TextAlignment alignment, int color) {
         this.status[idx] = ((status == null) || status.trim().isEmpty()) ? null : new FormattedString(status, alignment, color);
         markDirtyClient();
     }
 
+    @Override
+    public void setStatus(int idx, FormattedString status) {
+        this.status[idx] = status;
+        markDirtyClient();
+    }
+
+    @Override
     public FormattedString getTitle() {
         return title;
     }
 
+    @Override
     public FormattedString[] getStatus() {
         return status;
     }
@@ -217,6 +204,11 @@ public class ScreenTE extends QUTileEntity implements ITickable, DefaultSidedInv
     }
 
     @Override
+    public IItemHandler getItemHandler() {
+        return getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+    }
+
+    @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
     }
@@ -225,7 +217,7 @@ public class ScreenTE extends QUTileEntity implements ITickable, DefaultSidedInv
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound, inventoryHelper);
-        size = tagCompound.getInteger("size");
+        size = ScreenSize.values()[tagCompound.getInteger("size")];
         transparent = tagCompound.getBoolean("transparent");
         color = tagCompound.getInteger("color");
         borderColor = tagCompound.getInteger("borderColor");
@@ -252,7 +244,7 @@ public class ScreenTE extends QUTileEntity implements ITickable, DefaultSidedInv
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound, inventoryHelper);
-        tagCompound.setInteger("size", size);
+        tagCompound.setInteger("size", size.ordinal());
         tagCompound.setBoolean("transparent", transparent);
         tagCompound.setInteger("color", color);
         tagCompound.setInteger("borderColor", borderColor);
@@ -269,7 +261,7 @@ public class ScreenTE extends QUTileEntity implements ITickable, DefaultSidedInv
     private FormattedString getFormattedStringFromNBT(NBTTagCompound tagCompound, String prefix) {
         if (tagCompound.hasKey(prefix)) {
             return new FormattedString(tagCompound.getString(prefix),
-                    Alignment.values()[tagCompound.getByte(prefix + "A")],
+                    TextAlignment.values()[tagCompound.getByte(prefix + "A")],
                     tagCompound.getInteger(prefix + "C"));
         } else {
             return null;
@@ -284,25 +276,30 @@ public class ScreenTE extends QUTileEntity implements ITickable, DefaultSidedInv
         }
     }
 
+    @Override
     public int getBorderColor() {
         return borderColor;
     }
 
+    @Override
     public void setBorderColor(int borderColor) {
         this.borderColor = borderColor;
         markDirtyClient();
     }
 
-    public int getColor() {
+    @Override
+    public int getBackgroundColor() {
         return color;
     }
 
-    public void setColor(int color) {
+    @Override
+    public void setBackgroundColor(int color) {
         this.color = color;
         markDirtyClient();
     }
 
-    public void setSize(int size) {
+    @Override
+    public void setSize(ScreenSize size) {
         this.size = size;
         markDirtyClient();
     }
@@ -316,17 +313,30 @@ public class ScreenTE extends QUTileEntity implements ITickable, DefaultSidedInv
         markDirtyClient();
     }
 
+    @Override
     public void setTransparent(boolean transparent) {
         this.transparent = transparent;
         markDirtyClient();
     }
 
-    public int getSize() {
+    @Override
+    public ScreenSize getSize() {
         return size;
     }
 
+    @Override
     public boolean isTransparent() {
         return transparent;
+    }
+
+    @Override
+    public BlockPos getPosition() {
+        return pos;
+    }
+
+    @Override
+    public World getScreenWorld() {
+        return world;
     }
 
     @Override
@@ -339,29 +349,29 @@ public class ScreenTE extends QUTileEntity implements ITickable, DefaultSidedInv
             Integer color = params.get(PARAM_COLOR);
             setBorderColor(color);
             Integer screen = params.get(PARAM_SCREEN);
-            setColor(screen);
+            setBackgroundColor(screen);
             String iconString = params.get(PARAM_ICON);
             String fileName = params.get(PARAM_FILE);
             boolean transp = params.get(PARAM_TRANSP);
             setTransparent(transp);
             int s = params.get(PARAM_SIZE);
-            setSize(s);
+            setSize(ScreenSize.values()[s]);
             setIcon(iconString.trim().isEmpty() ? null : new ResourceLocation(iconString),
                     fileName.trim().isEmpty() ? null : fileName);
             markDirtyClient();
             return true;
         } else if (CMD_UPDATE_STRING.equals(command)) {
             if (params.get(PARAM_TITLE) != null) {
-                setTitle(params.get(PARAM_TITLE), Alignment.values()[params.get(PARAM_TITLE_A)], params.get(PARAM_TITLE_C));
+                setTitle(params.get(PARAM_TITLE), TextAlignment.values()[params.get(PARAM_TITLE_A)], params.get(PARAM_TITLE_C));
             }
             if (params.get(PARAM_STATUS0) != null) {
-                setStatus(0, params.get(PARAM_STATUS0), Alignment.values()[params.get(PARAM_STATUS0_A)], params.get(PARAM_STATUS0_C));
+                setStatus(0, params.get(PARAM_STATUS0), TextAlignment.values()[params.get(PARAM_STATUS0_A)], params.get(PARAM_STATUS0_C));
             }
             if (params.get(PARAM_STATUS1) != null) {
-                setStatus(1, params.get(PARAM_STATUS1), Alignment.values()[params.get(PARAM_STATUS1_A)], params.get(PARAM_STATUS1_C));
+                setStatus(1, params.get(PARAM_STATUS1), TextAlignment.values()[params.get(PARAM_STATUS1_A)], params.get(PARAM_STATUS1_C));
             }
             if (params.get(PARAM_STATUS2) != null) {
-                setStatus(2, params.get(PARAM_STATUS2), Alignment.values()[params.get(PARAM_STATUS2_A)], params.get(PARAM_STATUS2_C));
+                setStatus(2, params.get(PARAM_STATUS2), TextAlignment.values()[params.get(PARAM_STATUS2_A)], params.get(PARAM_STATUS2_C));
             }
             markDirtyClient();
             return true;
@@ -428,7 +438,7 @@ public class ScreenTE extends QUTileEntity implements ITickable, DefaultSidedInv
         if (obj.has(tag)) {
             JsonObject object = obj.get("tag").getAsJsonObject();
             return new FormattedString(object.get("text").getAsString(),
-                    Alignment.values()[object.get("alignment").getAsInt()],
+                    TextAlignment.values()[object.get("alignment").getAsInt()],
                     object.get("color").getAsInt());
         } else {
             return null;

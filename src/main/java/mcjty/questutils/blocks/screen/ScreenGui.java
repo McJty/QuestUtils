@@ -8,6 +8,8 @@ import mcjty.lib.gui.widgets.*;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.TypedMap;
 import mcjty.questutils.QuestUtils;
+import mcjty.questutils.api.FormattedString;
+import mcjty.questutils.api.TextAlignment;
 import mcjty.questutils.blocks.QUTileEntity;
 import mcjty.questutils.network.QuestUtilsMessages;
 import net.minecraft.item.EnumDyeColor;
@@ -79,7 +81,7 @@ public class ScreenGui extends GenericGuiContainer<ScreenTE> {
             screenColor.addColors(color.getColorValue());
         }
         screenColor.setTooltips("Set the color for", "the screen");
-        screenColor.setCurrentColor(tileEntity.getColor());
+        screenColor.setCurrentColor(tileEntity.getBackgroundColor());
         screenColor.addChoiceEvent((parent, newColor) -> update());
 
 
@@ -92,7 +94,7 @@ public class ScreenGui extends GenericGuiContainer<ScreenTE> {
         size = new ChoiceLabel(mc, this)
             .addChoices(SIZES)
             .setLayoutHint(new PositionalLayout.PositionalHint(190, 58, 43, 14));
-        size.setChoice(SIZES[tileEntity.getSize()]);
+        size.setChoice(SIZES[tileEntity.getSize().ordinal()]);
         size.addChoiceEvent((parent, newChoice) -> update());
 
         Panel status0Panel = getStringPanel("Stat0", PARAM_STATUS0, PARAM_STATUS0_A, PARAM_STATUS0_C, tileEntity.getStatus()[0]).setLayoutHint(new PositionalLayout.PositionalHint(0, 82, WIDTH, 14));
@@ -129,7 +131,7 @@ public class ScreenGui extends GenericGuiContainer<ScreenTE> {
     }
 
 
-    private Panel getStringPanel(String label, Key<String> titleKey, Key<Integer> alignKey, Key<Integer> colorKey, ScreenTE.FormattedString string) {
+    private Panel getStringPanel(String label, Key<String> titleKey, Key<Integer> alignKey, Key<Integer> colorKey, FormattedString string) {
         Panel panel = new Panel(mc, this).setLayout(new PositionalLayout());
 
         panel.addChild(new Label(mc, this)
@@ -178,13 +180,13 @@ public class ScreenGui extends GenericGuiContainer<ScreenTE> {
         return panel;
     }
 
-    private ScreenTE.Alignment getAlignment(ChoiceLabel choice) {
+    private TextAlignment getAlignment(ChoiceLabel choice) {
         if ("L".equals(choice.getCurrentChoice())) {
-            return ScreenTE.Alignment.LEFT;
+            return TextAlignment.LEFT;
         } else if ("C".equals(choice.getCurrentChoice())) {
-            return ScreenTE.Alignment.CENTER;
+            return TextAlignment.CENTER;
         } else {
-            return ScreenTE.Alignment.RIGHT;
+            return TextAlignment.RIGHT;
         }
     }
 
@@ -204,7 +206,7 @@ public class ScreenGui extends GenericGuiContainer<ScreenTE> {
         return size.getCurrentChoice().charAt(0)-'1';
     }
 
-    private void updateString(Key<String> titleKey, Key<Integer> alignKey, Key<Integer> colorKey, String title, ScreenTE.Alignment alignment, int color) {
+    private void updateString(Key<String> titleKey, Key<Integer> alignKey, Key<Integer> colorKey, String title, TextAlignment alignment, int color) {
         sendServerCommand(QuestUtilsMessages.INSTANCE, ScreenTE.CMD_UPDATE_STRING,
                 TypedMap.builder()
                         .put(titleKey, title)

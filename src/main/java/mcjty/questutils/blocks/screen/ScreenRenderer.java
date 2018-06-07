@@ -2,9 +2,9 @@ package mcjty.questutils.blocks.screen;
 
 import mcjty.lib.blocks.BaseBlock;
 import mcjty.questutils.QuestUtils;
+import mcjty.questutils.api.FormattedString;
 import mcjty.questutils.blocks.ModBlocks;
 import mcjty.questutils.config.GeneralConfiguration;
-import mcjty.questutils.proxy.CommonProxy;
 import mcjty.questutils.rendering.ImageLoader;
 import mcjty.questutils.rendering.RenderTools;
 import net.minecraft.block.Block;
@@ -80,7 +80,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTE> {
             renderScreenBoard(0, 0);
         } else if (!tileEntity.isTransparent()) {
             GlStateManager.disableLighting();
-            renderScreenBoard(tileEntity.getSize(), tileEntity.getColor());
+            renderScreenBoard(tileEntity.getSize().ordinal(), tileEntity.getBackgroundColor());
         }
 
         if (tileEntity != null) {
@@ -89,7 +89,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTE> {
             GlStateManager.depthMask(false);
             GlStateManager.disableLighting();
 
-            renderModules(fontrenderer, tileEntity, tileEntity.getSize());
+            renderModules(fontrenderer, tileEntity, tileEntity.getSize().ordinal());
         }
 
         GlStateManager.enableLighting();
@@ -210,9 +210,9 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTE> {
     }
 
     private void renderStatus(ScreenTE tileEntity, float factor) {
-        ScreenTE.FormattedString[] status = tileEntity.getStatus();
+        FormattedString[] status = tileEntity.getStatus();
         int currenty = 95;
-        for (ScreenTE.FormattedString s : status) {
+        for (FormattedString s : status) {
             if (s != null) {
                 int width = Minecraft.getMinecraft().fontRenderer.getStringWidth(s.getText());
                 int textx = 10;

@@ -5,6 +5,7 @@ import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.prefab.AbstractManagedEnvironment;
 import mcjty.lib.integration.computers.AbstractOCDriver;
+import mcjty.questutils.api.TextAlignment;
 import mcjty.questutils.blocks.screen.ScreenContainer;
 import mcjty.questutils.blocks.screen.ScreenTE;
 import net.minecraft.item.ItemStack;
@@ -36,7 +37,7 @@ public class ScreenDriver {
                 String newVal = a.checkString(0);
                 int align = a.checkInteger(1);
                 int color = a.checkInteger(2);
-                tile.setTitle(newVal, ScreenTE.Alignment.values()[align], color);
+                tile.setTitle(newVal, TextAlignment.values()[align], color);
                 return new Object[]{true};
             }
 
@@ -46,7 +47,7 @@ public class ScreenDriver {
                 String newVal = a.checkString(1);
                 int align = a.checkInteger(2);
                 int color = a.checkInteger(3);
-                tile.setStatus(index, newVal, ScreenTE.Alignment.values()[align], color);
+                tile.setStatus(index, newVal, TextAlignment.values()[align], color);
                 return new Object[]{true};
             }
 
@@ -60,7 +61,7 @@ public class ScreenDriver {
             @Callback(doc = "function(integer); Set the screen color")
             public Object[] setColor(Context c, Arguments a) {
                 Integer color = a.checkInteger(0);
-                tile.setColor(color);
+                tile.setBackgroundColor(color);
                 return new Object[]{true};
             }
 

@@ -2,6 +2,7 @@ package mcjty.questutils.blocks.screen;
 
 import mcjty.lib.blocks.BaseBlock;
 import mcjty.lib.gui.GenericGuiContainer;
+import mcjty.questutils.api.ScreenSize;
 import mcjty.questutils.blocks.ModBlocks;
 import mcjty.questutils.blocks.QUBlock;
 import mcjty.questutils.proxy.GuiProxy;
@@ -350,8 +351,8 @@ public class ScreenBlock extends QUBlock<ScreenTE, ScreenContainer> {
         TileEntity tileEntity = world.getTileEntity(pos);
         if (tileEntity instanceof ScreenTE) {
             ScreenTE screenTileEntity = (ScreenTE) tileEntity;
-            if (screenTileEntity.getSize() > ScreenTE.SIZE_NORMAL) {
-                setInvisibleBlocks(world, pos, screenTileEntity.getSize());
+            if (screenTileEntity.getSize().ordinal() > ScreenSize.NORMAL.ordinal()) {
+                setInvisibleBlocks(world, pos, screenTileEntity.getSize().ordinal());
             }
         }
     }
@@ -362,8 +363,8 @@ public class ScreenBlock extends QUBlock<ScreenTE, ScreenContainer> {
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof ScreenTE) {
             ScreenTE screenTileEntity = (ScreenTE) te;
-            if (screenTileEntity.getSize() > ScreenTE.SIZE_NORMAL) {
-                clearInvisibleBlocks(world, pos, state, screenTileEntity.getSize());
+            if (screenTileEntity.getSize().ordinal() > ScreenSize.NORMAL.ordinal()) {
+                clearInvisibleBlocks(world, pos, state, screenTileEntity.getSize().ordinal());
             }
         }
         super.breakBlock(world, pos, state);

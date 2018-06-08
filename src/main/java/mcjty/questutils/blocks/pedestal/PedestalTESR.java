@@ -13,7 +13,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class PedestalTESR extends TileEntitySpecialRenderer<PedestalTE> {
     @Override
     public void render(PedestalTE te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
-        GlStateManager.pushAttrib();
         GlStateManager.pushMatrix();
 
         // Translate to the location of our tile entity
@@ -24,8 +23,6 @@ public class PedestalTESR extends TileEntitySpecialRenderer<PedestalTE> {
         renderItem(te);
 
         GlStateManager.popMatrix();
-        GlStateManager.popAttrib();
-
     }
 
     private void renderItem(PedestalTE te) {
@@ -33,7 +30,6 @@ public class PedestalTESR extends TileEntitySpecialRenderer<PedestalTE> {
         if (!stack.isEmpty()) {
             RenderHelper.enableStandardItemLighting();
             GlStateManager.enableLighting();
-            GlStateManager.pushMatrix();
             // Translate to the center of the block and .9 points higher
             GlStateManager.translate(.5, .9, .5);
             GlStateManager.scale(.4f, .4f, .4f);
@@ -41,8 +37,6 @@ public class PedestalTESR extends TileEntitySpecialRenderer<PedestalTE> {
             GlStateManager.rotate(angle, 0, 1, 0);
 
             Minecraft.getMinecraft().getRenderItem().renderItem(stack, ItemCameraTransforms.TransformType.NONE);
-
-            GlStateManager.popMatrix();
         }
     }
 

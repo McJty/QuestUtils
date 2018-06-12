@@ -1,3 +1,6 @@
+0.2.0:
+- Added first version of an API
+
 0.1.0:
 - Made compatible with the latest McJtyLib (3.0.0)
 

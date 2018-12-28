@@ -1,3 +1,11 @@
+0.3.0:
+- The 'qu list', 'qu save', and 'qu load' commands now support an optional radius parameter. Using that you can (for example) say things like: 'qu save filename.json * 50' which will save everything in a radious of 50 around the players position
+- The 'qu save' command will give feedback on how many objects were saved
+- New 'qu help' command that shows more detailed information on how the commands work
+- Fixed a bug where the pedestal would not remember it's ID
+- New feature in the item comparator to have the ability to 'lock' input slots to a given item (using 'Remember' and 'Forget' buttons)
+- New reward chest which is a chest that also has an ID and is able to save/restore it's contents using the 'qu load' and 'qu save' commands. If you open the GUI of this chest with a key in your hand you get the ability to edit the ID. Otherwise you can only access the chest
+
 0.2.0:
 - Added first version of an API
 

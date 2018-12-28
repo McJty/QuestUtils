@@ -8,6 +8,7 @@ import mcjty.questutils.data.QUEntry;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
@@ -76,6 +77,8 @@ public class JsonPersistance {
         writer.print(gson.toJson(array));
 
         writer.close();
+
+        sender.sendMessage(new TextComponentString("Saved " + array.size() + " objects"));
     }
 
     public static void read(File file, Predicate<String> matcher, ICommandSender sender, BiPredicate<Integer, BlockPos> radiusMatcher) {

@@ -5,11 +5,15 @@ import mcjty.lib.varia.Logging;
 import mcjty.questutils.blocks.QUTileEntity;
 import mcjty.questutils.data.QUData;
 import mcjty.questutils.data.QUEntry;
+import net.minecraft.command.ICommandSender;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
 import java.io.*;
+import java.util.Map;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 public class JsonPersistance {
@@ -44,7 +48,7 @@ public class JsonPersistance {
         }
     }
 
-    public static void write(File file, Predicate<String> matcher) {
+    public static void write(File file, Predicate<String> matcher, ICommandSender sender, BiPredicate<Integer, BlockPos> radiusMatcher) {
         PrintWriter writer;
         try {
             writer = new PrintWriter(file);
@@ -55,11 +59,15 @@ public class JsonPersistance {
 
         JsonArray array = new JsonArray();
 
-        for (String id : QUData.getData().getEntries().keySet()) {
+        Map<String, QUEntry> entries = QUData.getData().getEntries();
+        for (String id : entries.keySet()) {
             if (matcher.test(id)) {
-                JsonObject object = getJsonObject(id);
-                if (object != null) {
-                    array.add(object);
+                QUEntry entry = entries.get(id);
+                if (radiusMatcher.test(entry.getDimension(), entry.getPos())) {
+                    JsonObject object = getJsonObject(id);
+                    if (object != null) {
+                        array.add(object);
+                    }
                 }
             }
         }
@@ -70,7 +78,7 @@ public class JsonPersistance {
         writer.close();
     }
 
-    public static void read(File file, Predicate<String> matcher) {
+    public static void read(File file, Predicate<String> matcher, ICommandSender sender, BiPredicate<Integer, BlockPos> radiusMatcher) {
         FileInputStream inputstream;
         try {
             inputstream = new FileInputStream(file);
@@ -96,9 +104,11 @@ public class JsonPersistance {
                 if (qu == null) {
                     System.out.println("Cannot find id '" + id + "'!");
                 } else {
-                    QUTileEntity te = getQUTile(id);
-                    if (te != null) {
-                        te.readFromJson(object);
+                    if (radiusMatcher.test(qu.getDimension(), qu.getPos())) {
+                        QUTileEntity te = getQUTile(id);
+                        if (te != null) {
+                            te.readFromJson(object);
+                        }
                     }
                 }
             }

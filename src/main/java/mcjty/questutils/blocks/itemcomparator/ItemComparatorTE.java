@@ -1,6 +1,8 @@
 package mcjty.questutils.blocks.itemcomparator;
 
 import com.google.gson.JsonObject;
+import mcjty.lib.bindings.DefaultAction;
+import mcjty.lib.bindings.IAction;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.questutils.blocks.QUTileEntity;
@@ -8,7 +10,9 @@ import mcjty.questutils.json.JsonTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.common.util.Constants;
 
 public class ItemComparatorTE extends QUTileEntity implements DefaultSidedInventory {
 
@@ -16,10 +20,22 @@ public class ItemComparatorTE extends QUTileEntity implements DefaultSidedInvent
     private boolean inAlarm = false;
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, ItemComparatorContainer.factory, 32);
+    private InventoryHelper ghostSlots = new InventoryHelper(this, ItemComparatorContainer.factory, 16);
+
+    public static final String ACTION_REMEMBER = "remember";
+    public static final String ACTION_FORGET = "forget";
 
     @Override
     protected boolean needsCustomInvWrapper() {
         return true;
+    }
+
+    @Override
+    public IAction[] getActions() {
+        return new IAction[] {
+                new DefaultAction(ACTION_REMEMBER, this::rememberItems),
+                new DefaultAction(ACTION_FORGET, this::forgetItems)
+        };
     }
 
     @Override
@@ -126,8 +142,15 @@ public class ItemComparatorTE extends QUTileEntity implements DefaultSidedInvent
         return slots;
     }
 
+    public InventoryHelper getGhostSlots() {
+        return ghostSlots;
+    }
+
     @Override
     public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) {
+        if (!isItemValidForSlot(index, itemStackIn)) {
+            return false;
+        }
         return index >= 16 && index < 16+16;
     }
 
@@ -167,22 +190,81 @@ public class ItemComparatorTE extends QUTileEntity implements DefaultSidedInvent
     }
 
     @Override
+    public boolean isItemValidForSlot(int index, ItemStack stack) {
+        if (index >= 16 && index < 16+16) {
+            ItemStack ghostSlot = ghostSlots.getStackInSlot(index - 16);
+            if (!ghostSlot.isEmpty()) {
+                if (!ghostSlot.isItemEqual(stack)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private void rememberItems() {
+        for (int i = 0 ; i < ghostSlots.getCount() ; i++) {
+            int slotIdx = i + 16;
+            if (inventoryHelper.containsItem(slotIdx)) {
+                ItemStack stack = inventoryHelper.getStackInSlot(slotIdx).copy();
+                stack.setCount(1);
+                ghostSlots.setStackInSlot(i, stack);
+            }
+        }
+        markDirtyClient();
+    }
+
+    private void forgetItems() {
+        for (int i = 0 ; i < ghostSlots.getCount() ; i++) {
+            ghostSlots.setStackInSlot(i, ItemStack.EMPTY);
+        }
+        markDirtyClient();
+    }
+
+
+    @Override
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound, inventoryHelper);
+        readGhostBufferFromNBT(tagCompound);
     }
+
+    private void readGhostBufferFromNBT(NBTTagCompound tagCompound) {
+        NBTTagList bufferTagList = tagCompound.getTagList("GItems", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
+            NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
+            ghostSlots.setStackInSlot(i, new ItemStack(nbtTagCompound));
+        }
+    }
+
 
     @Override
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound, inventoryHelper);
+        writeGhostBufferToNBT(tagCompound);
     }
+
+    private void writeGhostBufferToNBT(NBTTagCompound tagCompound) {
+        NBTTagList bufferTagList = new NBTTagList();
+        for (int i = 0 ; i < ghostSlots.getCount() ; i++) {
+            ItemStack stack = ghostSlots.getStackInSlot(i);
+            NBTTagCompound nbtTagCompound = new NBTTagCompound();
+            if (!stack.isEmpty()) {
+                stack.writeToNBT(nbtTagCompound);
+            }
+            bufferTagList.appendTag(nbtTagCompound);
+        }
+        tagCompound.setTag("GItems", bufferTagList);
+    }
+
 
     @Override
     public void writeToJson(JsonObject object) {
         super.writeToJson(object);
         if (hasIdentifier()) {
             object.add("filter", JsonTools.writeItemsToJson(getInventoryHelper(), 0, 16));
+            object.add("ghost", JsonTools.writeItemsToJson(ghostSlots, 0, 16));
         }
     }
 
@@ -192,6 +274,9 @@ public class ItemComparatorTE extends QUTileEntity implements DefaultSidedInvent
         if (object.has("filter")) {
             JsonTools.readItemsFromJson(object.getAsJsonArray("filter"), getInventoryHelper(), 0, 16);
             detect();
+        }
+        if (object.has("ghost")) {
+            JsonTools.readItemsFromJson(object.getAsJsonArray("ghost"), ghostSlots, 0, 16);
         }
     }
 }

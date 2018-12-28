@@ -1,20 +1,25 @@
 package mcjty.questutils.blocks.itemcomparator;
 
+import mcjty.lib.client.RenderHelper;
+import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.PositionalLayout;
-import mcjty.lib.gui.widgets.ImageChoiceLabel;
+import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
-import mcjty.lib.varia.RedstoneMode;
 import mcjty.questutils.QuestUtils;
 import mcjty.questutils.blocks.QUTileEntity;
 import mcjty.questutils.network.QuestUtilsMessages;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
-import java.awt.Rectangle;
+import java.awt.*;
 
 public class ItemComparatorGui extends GenericGuiContainer<ItemComparatorTE> {
 
@@ -31,21 +36,9 @@ public class ItemComparatorGui extends GenericGuiContainer<ItemComparatorTE> {
         ySize = HEIGHT;
     }
 
-    private void initRedstoneMode() {
-        ImageChoiceLabel redstoneMode = new ImageChoiceLabel(mc, this).
-                setName("redstone").
-                addChoice(RedstoneMode.REDSTONE_IGNORED.getDescription(), "Redstone mode:\nIgnored", iconGuiElements, 0, 0).
-                addChoice(RedstoneMode.REDSTONE_OFFREQUIRED.getDescription(), "Redstone mode:\nOff to activate", iconGuiElements, 16, 0).
-                addChoice(RedstoneMode.REDSTONE_ONREQUIRED.getDescription(), "Redstone mode:\nOn to activate", iconGuiElements, 32, 0);
-        redstoneMode.setLayoutHint(new PositionalLayout.PositionalHint(154, 46, 16, 16));
-    }
-
-
     @Override
     public void initGui() {
         super.initGui();
-
-//        initRedstoneMode();
 
         TextField idField = new TextField(mc, this)
                 .setName("id")
@@ -55,18 +48,67 @@ public class ItemComparatorGui extends GenericGuiContainer<ItemComparatorTE> {
                 .addChild(new Label(mc, this).setText("ID").setLayoutHint(new PositionalLayout.PositionalHint(12, 6, 16, 14)).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT))
                 .addChild(idField)
                 .addChild(new Label(mc, this).setText("Filter").setLayoutHint(new PositionalLayout.PositionalHint(12, 22, 18*4, 14)).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT))
-                .addChild(new Label(mc, this).setText("Buffer").setLayoutHint(new PositionalLayout.PositionalHint(102, 22, 18*4, 14)).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT));
-//                .addChild(redstoneMode);
+                .addChild(new Label(mc, this).setText("Buffer").setLayoutHint(new PositionalLayout.PositionalHint(102, 22, 18*4, 14)).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT))
+                .addChild(new Button(mc, this).setText("Remember").setLayoutHint(new PositionalLayout.PositionalHint(118, 110, 55, 14)).setChannel("remember"))
+                .addChild(new Button(mc, this).setText("Forget").setLayoutHint(new PositionalLayout.PositionalHint(118, 125, 55, 14)).setChannel("forget"))
+                ;
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
 
-//        window.bind(QuestUtilsMessages.INSTANCE, "redstone", tileEntity, GenericTileEntity.VALUE_RSMODE.getName());
         window.bind(QuestUtilsMessages.INSTANCE, "id", tileEntity, QUTileEntity.VALUE_ID.getName());
+        window.event("remember", (source, params) -> window.sendAction(QuestUtilsMessages.INSTANCE, tileEntity, ItemComparatorTE.ACTION_REMEMBER));
+        window.event("forget", (source, params) -> window.sendAction(QuestUtilsMessages.INSTANCE, tileEntity, ItemComparatorTE.ACTION_FORGET));
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
         drawWindow();
+        drawGhostSlots();
+    }
+
+
+    private void drawGhostSlots() {
+        net.minecraft.client.renderer.RenderHelper.enableGUIStandardItemLighting();
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(guiLeft, guiTop, 0.0F);
+        GlStateManager.color(1.0F, 0.0F, 0.0F, 1.0F);
+        GlStateManager.enableRescaleNormal();
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (short) 240 / 1.0F, 240.0f);
+
+        InventoryHelper ghostSlots = tileEntity.getGhostSlots();
+        zLevel = 100.0F;
+        itemRender.zLevel = 100.0F;
+        GlStateManager.enableDepth();
+        GlStateManager.disableBlend();
+        GlStateManager.enableLighting();
+
+        for (int i = 0 ; i < ghostSlots.getCount() ; i++) {
+            ItemStack stack = ghostSlots.getStackInSlot(i);
+            if (!stack.isEmpty()) {
+                int slotIdx = 16 + i;
+                Slot slot = inventorySlots.getSlot(slotIdx);
+                if (!slot.getHasStack()) {
+                    itemRender.renderItemAndEffectIntoGUI(stack, slot.xPos, slot.yPos);
+
+                    GlStateManager.disableLighting();
+                    GlStateManager.enableBlend();
+                    GlStateManager.disableDepth();
+                    this.mc.getTextureManager().bindTexture(iconGuiElements);
+                    RenderHelper.drawTexturedModalRect(slot.xPos, slot.yPos, 14 * 16, 3 * 16, 16, 16);
+                    GlStateManager.enableDepth();
+                    GlStateManager.disableBlend();
+                    GlStateManager.enableLighting();
+                }
+            }
+
+        }
+        itemRender.zLevel = 0.0F;
+        zLevel = 0.0F;
+
+        GlStateManager.popMatrix();
+        net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
     }
 }
+
+

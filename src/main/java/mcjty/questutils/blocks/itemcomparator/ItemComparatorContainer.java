@@ -1,12 +1,10 @@
 package mcjty.questutils.blocks.itemcomparator;
 
-import mcjty.lib.container.ContainerFactory;
-import mcjty.lib.container.GenericContainer;
-import mcjty.lib.container.SlotDefinition;
-import mcjty.lib.container.SlotType;
+import mcjty.lib.container.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
 public class ItemComparatorContainer extends GenericContainer {
@@ -29,6 +27,23 @@ public class ItemComparatorContainer extends GenericContainer {
         addInventory(CONTAINER_INVENTORY, containerInventory);
         addInventory(ContainerFactory.CONTAINER_PLAYER, player.inventory);
         generateSlots();
+    }
+
+    @Override
+    protected Slot createSlot(SlotFactory slotFactory, IInventory inventory, int index, int x, int y, SlotType slotType) {
+        if (index >= 16 && index < 16+16) {
+            return new BaseSlot(inventory, index, x, y) {
+                @Override
+                public boolean isItemValid(ItemStack stack) {
+                    if (!inventory.isItemValidForSlot(getSlotIndex(), stack)) {
+                        return false;
+                    }
+                    return super.isItemValid(stack);
+                }
+            };
+        } else {
+            return super.createSlot(slotFactory, inventory, index, x, y, slotType);
+        }
     }
 
     @Override

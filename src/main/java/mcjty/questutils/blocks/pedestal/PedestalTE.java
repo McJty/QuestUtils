@@ -29,6 +29,7 @@ public class PedestalTE extends QUTileEntity implements DefaultSidedInventory {
     public IValue<?>[] getValues() {
         return new IValue[] {
                 new DefaultValue<>(VALUE_MODE, () -> this.getMode().ordinal(), (v) -> this.setMode(PedestalMode.values()[v])),
+                new DefaultValue<>(VALUE_ID, this::getIdentifier, this::setIdentifier),
         };
     }
 

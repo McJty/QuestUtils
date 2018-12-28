@@ -1,5 +1,6 @@
 package mcjty.questutils.proxy;
 
+import com.google.common.collect.ImmutableMap;
 import mcjty.lib.McJtyRegister;
 import mcjty.lib.network.PacketHandler;
 import mcjty.lib.proxy.AbstractCommonProxy;
@@ -10,8 +11,11 @@ import mcjty.questutils.items.ModItems;
 import mcjty.questutils.network.QuestUtilsMessages;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.animation.ITimeValue;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.model.animation.IAnimationStateMachine;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -22,6 +26,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import org.apache.logging.log4j.Level;
 
+import javax.annotation.Nullable;
 import java.io.File;
 
 public abstract class CommonProxy extends AbstractCommonProxy {
@@ -83,5 +88,10 @@ public abstract class CommonProxy extends AbstractCommonProxy {
     public void postInit(FMLPostInitializationEvent e) {
         super.postInit(e);
         mainConfig = null;
+    }
+
+    @Nullable
+    public IAnimationStateMachine load(ResourceLocation location, ImmutableMap<String, ITimeValue> parameters) {
+        return null;
     }
 }

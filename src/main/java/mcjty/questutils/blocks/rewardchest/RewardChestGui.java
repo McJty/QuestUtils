@@ -49,7 +49,9 @@ public class RewardChestGui extends GenericGuiContainer<RewardChestTE> {
 
         window = new Window(this, toplevel);
 
-        window.bind(QuestUtilsMessages.INSTANCE, "id", tileEntity, QUTileEntity.VALUE_ID.getName());
+        if (idEnabled) {
+            window.bind(QuestUtilsMessages.INSTANCE, "id", tileEntity, QUTileEntity.VALUE_ID.getName());
+        }
     }
 
     public void enableId() {

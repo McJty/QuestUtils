@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -40,5 +41,7 @@ public class PedestalTESR extends TileEntitySpecialRenderer<PedestalTE> {
         }
     }
 
-
+    public static void register() {
+        ClientRegistry.bindTileEntitySpecialRenderer(PedestalTE.class, new PedestalTESR());
+    }
 }

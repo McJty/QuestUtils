@@ -13,7 +13,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -48,10 +47,9 @@ public class PedestalBlock extends QUBlock<PedestalTE, PedestalContainer> {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
     public void initModel() {
         super.initModel();
-        ClientRegistry.bindTileEntitySpecialRenderer(PedestalTE.class, new PedestalTESR());
+        PedestalTESR.register();
     }
 
     @Override

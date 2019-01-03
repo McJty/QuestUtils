@@ -33,7 +33,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -144,7 +143,7 @@ public class ScreenBlock extends QUBlock<ScreenTE, ScreenContainer> {
     @SideOnly(Side.CLIENT)
     @Override
     public void initModel() {
-        ClientRegistry.bindTileEntitySpecialRenderer(ScreenTE.class, new ScreenRenderer());
+        ScreenRenderer.register();
         ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(this), 0, ScreenTE.class);
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
     }

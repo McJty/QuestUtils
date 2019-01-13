@@ -2,9 +2,13 @@ package mcjty.questutils.blocks.itemcomparator;
 
 import com.google.gson.JsonObject;
 import mcjty.lib.bindings.DefaultAction;
+import mcjty.lib.bindings.DefaultValue;
 import mcjty.lib.bindings.IAction;
+import mcjty.lib.bindings.IValue;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.typed.Key;
+import mcjty.lib.typed.Type;
 import mcjty.questutils.blocks.QUTileEntity;
 import mcjty.questutils.json.JsonTools;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,12 +22,46 @@ public class ItemComparatorTE extends QUTileEntity implements DefaultSidedInvent
 
     private static int[] slots = null;
     private boolean inAlarm = false;
+    private boolean ignoreMeta = false;
+    private boolean ignoreNBT = false;
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, ItemComparatorContainer.factory, 32);
     private InventoryHelper ghostSlots = new InventoryHelper(this, ItemComparatorContainer.factory, 16);
 
     public static final String ACTION_REMEMBER = "remember";
     public static final String ACTION_FORGET = "forget";
+
+    public static final Key<Boolean> VALUE_IGNORE_NBT = new Key<>("ignoreNBT", Type.BOOLEAN);
+    public static final Key<Boolean> VALUE_IGNORE_META = new Key<>("ignoreMeta", Type.BOOLEAN);
+
+    @Override
+    public IValue<?>[] getValues() {
+        return new IValue[] {
+                new DefaultValue<>(VALUE_ID, this::getIdentifier, this::setIdentifier),
+                new DefaultValue<>(VALUE_IGNORE_META, this::isIgnoreMeta, this::setIgnoreMeta),
+                new DefaultValue<>(VALUE_IGNORE_NBT, this::isIgnoreNBT, this::setIgnoreNBT)
+        };
+    }
+
+    public boolean isIgnoreMeta() {
+        return ignoreMeta;
+    }
+
+    public void setIgnoreMeta(boolean ignoreMeta) {
+        this.ignoreMeta = ignoreMeta;
+        markDirtyClient();
+        detect();
+    }
+
+    public boolean isIgnoreNBT() {
+        return ignoreNBT;
+    }
+
+    public void setIgnoreNBT(boolean ignoreNBT) {
+        this.ignoreNBT = ignoreNBT;
+        markDirtyClient();
+        detect();
+    }
 
     @Override
     protected boolean needsCustomInvWrapper() {
@@ -65,12 +103,29 @@ public class ItemComparatorTE extends QUTileEntity implements DefaultSidedInvent
         setAlarm(ok);
     }
 
+    private boolean match(ItemStack matcher, ItemStack item) {
+        if (ignoreMeta) {
+            if (matcher.getItem() != item.getItem()) {
+                return false;
+            }
+        } else {
+            if (!ItemStack.areItemsEqual(matcher, item)) {
+                return false;
+            }
+        }
+        if (ignoreNBT) {
+            return true;
+        } else {
+            return ItemStack.areItemStackTagsEqual(matcher, item);
+        }
+    }
+
     private int countMissing(ItemStack matcher, int[] amounts) {
         int toFind = matcher.getCount();
         for (int i = 0 ; i < 16 ; i++) {
             ItemStack item = getStackInSlot(i+16);
             if (!item.isEmpty()) {
-                if (ItemStack.areItemsEqual(matcher, item) && ItemStack.areItemStackTagsEqual(matcher, item)) {
+                if (match(matcher, item)) {
                     toFind -= Math.min(toFind, amounts[i]);
                     if (toFind <= 0) {
                         return 0;      // We found enough
@@ -86,7 +141,7 @@ public class ItemComparatorTE extends QUTileEntity implements DefaultSidedInvent
         for (int i = 0 ; i < 16 ; i++) {
             ItemStack item = getStackInSlot(i+16);
             if (!item.isEmpty()) {
-                if (ItemStack.areItemsEqual(matcher, item) && ItemStack.areItemStackTagsEqual(matcher, item)) {
+                if (match(matcher, item)) {
                     int consume = Math.min(toFind, amounts[i]);
                     toFind -= consume;
                     amounts[i] -= consume;
@@ -227,6 +282,8 @@ public class ItemComparatorTE extends QUTileEntity implements DefaultSidedInvent
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound, inventoryHelper);
         readGhostBufferFromNBT(tagCompound);
+        ignoreMeta = tagCompound.getBoolean("ignoreMeta");
+        ignoreNBT = tagCompound.getBoolean("ignoreNBT");
     }
 
     private void readGhostBufferFromNBT(NBTTagCompound tagCompound) {
@@ -243,6 +300,8 @@ public class ItemComparatorTE extends QUTileEntity implements DefaultSidedInvent
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound, inventoryHelper);
         writeGhostBufferToNBT(tagCompound);
+        tagCompound.setBoolean("ignoreMeta", ignoreMeta);
+        tagCompound.setBoolean("ignoreNBT", ignoreNBT);
     }
 
     private void writeGhostBufferToNBT(NBTTagCompound tagCompound) {

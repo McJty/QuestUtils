@@ -10,6 +10,7 @@ import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
+import mcjty.lib.gui.widgets.*;
 import mcjty.questutils.QuestUtils;
 import mcjty.questutils.blocks.QUTileEntity;
 import mcjty.questutils.network.QuestUtilsMessages;
@@ -44,6 +45,13 @@ public class ItemComparatorGui extends GenericGuiContainer<ItemComparatorTE> {
                 .setName("id")
                 .setLayoutHint(new PositionalLayout.PositionalHint(30, 6, 143, 14));
 
+        ToggleButton ignoreNBT = new ToggleButton(mc, this)
+                .setName("ignoreNBT")
+                .setLayoutHint(new PositionalLayout.PositionalHint(12, 110, 65, 14)).setText("Ignore NBT");
+        ToggleButton ignoreMeta = new ToggleButton(mc, this)
+                .setName("ignoreMeta")
+                .setLayoutHint(new PositionalLayout.PositionalHint(12, 125, 65, 14)).setText("Ignore Meta");
+
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout())
                 .addChild(new Label(mc, this).setText("ID").setLayoutHint(new PositionalLayout.PositionalHint(12, 6, 16, 14)).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT))
                 .addChild(idField)
@@ -51,12 +59,16 @@ public class ItemComparatorGui extends GenericGuiContainer<ItemComparatorTE> {
                 .addChild(new Label(mc, this).setText("Buffer").setLayoutHint(new PositionalLayout.PositionalHint(102, 22, 18*4, 14)).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT))
                 .addChild(new Button(mc, this).setText("Remember").setLayoutHint(new PositionalLayout.PositionalHint(118, 110, 55, 14)).setChannel("remember"))
                 .addChild(new Button(mc, this).setText("Forget").setLayoutHint(new PositionalLayout.PositionalHint(118, 125, 55, 14)).setChannel("forget"))
+                .addChild(ignoreNBT)
+                .addChild(ignoreMeta)
                 ;
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
 
         window.bind(QuestUtilsMessages.INSTANCE, "id", tileEntity, QUTileEntity.VALUE_ID.getName());
+        window.bind(QuestUtilsMessages.INSTANCE, "ignoreNBT", tileEntity, ItemComparatorTE.VALUE_IGNORE_NBT.getName());
+        window.bind(QuestUtilsMessages.INSTANCE, "ignoreMeta", tileEntity, ItemComparatorTE.VALUE_IGNORE_META.getName());
         window.event("remember", (source, params) -> window.sendAction(QuestUtilsMessages.INSTANCE, tileEntity, ItemComparatorTE.ACTION_REMEMBER));
         window.event("forget", (source, params) -> window.sendAction(QuestUtilsMessages.INSTANCE, tileEntity, ItemComparatorTE.ACTION_FORGET));
     }

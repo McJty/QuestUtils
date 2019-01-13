@@ -1,3 +1,6 @@
+0.3.1:
+- New 'ignore NBT' and 'ignore Meta' options with the item comparator
+
 0.3.0:
 - The 'qu list', 'qu save', and 'qu load' commands now support an optional radius parameter. Using that you can (for example) say things like: 'qu save filename.json * 50' which will save everything in a radious of 50 around the players position
 - The 'qu save' command will give feedback on how many objects were saved

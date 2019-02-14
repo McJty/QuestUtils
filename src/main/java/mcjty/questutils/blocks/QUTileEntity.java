@@ -61,13 +61,13 @@ public class QUTileEntity extends GenericTileEntity {
     }
 
     @Override
-    public void onBlockBreak(World workd, BlockPos pos, IBlockState state) {
-        super.onBlockBreak(workd, pos, state);
-        if (!world.isRemote) {
+    public void onBlockBreak(World world, BlockPos pos, IBlockState state) {
+        super.onBlockBreak(world, pos, state);
+        if (!this.world.isRemote) {
             if (hasIdentifier()) {
                 QUData.getData().removeEntry(identifier);
             }
-            QUData.getData().removeEntry(world.provider.getDimension(), pos);
+            QUData.getData().removeEntry(this.world.provider.getDimension(), pos);
         }
     }
 

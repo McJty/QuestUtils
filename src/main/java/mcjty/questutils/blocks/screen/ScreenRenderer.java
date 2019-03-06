@@ -168,7 +168,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTE> {
             if (filename != null && !filename.trim().isEmpty()) {
                 File file;
                 if (filename.startsWith("$")) {
-                    file = new File(QuestUtils.proxy.modConfigDir.getPath() + File.separator + filename.substring(1));
+                    file = new File(QuestUtils.setup.getModConfigDir().getPath() + File.separator + filename.substring(1));
                 } else {
                     file = new File(filename);
                 }

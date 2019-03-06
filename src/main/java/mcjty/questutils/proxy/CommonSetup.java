@@ -1,23 +1,23 @@
 package mcjty.questutils.proxy;
 
-import com.google.common.collect.ImmutableMap;
 import mcjty.lib.McJtyRegister;
 import mcjty.lib.network.PacketHandler;
-import mcjty.lib.proxy.AbstractCommonProxy;
+import mcjty.lib.setup.DefaultCommonSetup;
 import mcjty.questutils.QuestUtils;
 import mcjty.questutils.blocks.ModBlocks;
 import mcjty.questutils.config.GeneralConfiguration;
+import mcjty.questutils.integration.computers.OpenComputersIntegration;
 import mcjty.questutils.items.ModItems;
 import mcjty.questutils.network.QuestUtilsMessages;
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.animation.ITimeValue;
 import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.model.animation.IAnimationStateMachine;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -26,10 +26,9 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import org.apache.logging.log4j.Level;
 
-import javax.annotation.Nullable;
 import java.io.File;
 
-public abstract class CommonProxy extends AbstractCommonProxy {
+public class CommonSetup extends DefaultCommonSetup {
 
     @Override
     public void preInit(FMLPreInitializationEvent e) {
@@ -46,6 +45,11 @@ public abstract class CommonProxy extends AbstractCommonProxy {
 
         ModItems.init();
         ModBlocks.init();
+    }
+
+    @Override
+    public void createTabs() {
+        createTab("questutils", new ItemStack(Blocks.CRAFTING_TABLE));
     }
 
     @SubscribeEvent
@@ -80,6 +84,9 @@ public abstract class CommonProxy extends AbstractCommonProxy {
     public void init(FMLInitializationEvent e) {
         super.init(e);
         NetworkRegistry.INSTANCE.registerGuiHandler(QuestUtils.instance, new GuiProxy());
+        if (Loader.isModLoaded("opencomputers")) {
+            OpenComputersIntegration.init();
+        }
 //        MinecraftForge.EVENT_BUS.register(new ForgeEventHandlers());
 //        ModRecipes.init();
     }
@@ -88,10 +95,5 @@ public abstract class CommonProxy extends AbstractCommonProxy {
     public void postInit(FMLPostInitializationEvent e) {
         super.postInit(e);
         mainConfig = null;
-    }
-
-    @Nullable
-    public IAnimationStateMachine load(ResourceLocation location, ImmutableMap<String, ITimeValue> parameters) {
-        return null;
     }
 }

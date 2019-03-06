@@ -20,7 +20,7 @@ public class ControlKey extends Item {
     public ControlKey() {
         setUnlocalizedName(QuestUtils.MODID + "." + "controlkey");
         setRegistryName("controlkey");
-        setCreativeTab(QuestUtils.tabQuestUtils);
+        setCreativeTab(QuestUtils.setup.getTab());
         McJtyRegister.registerLater(this, QuestUtils.instance);
     }
 

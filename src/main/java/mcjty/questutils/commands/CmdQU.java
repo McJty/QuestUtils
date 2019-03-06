@@ -87,7 +87,7 @@ public class CmdQU extends CommandBase {
 
     private static void save(ICommandSender sender, String[] args) {
         String filename = args[1];
-        File file = new File(QuestUtils.proxy.modConfigDir.getPath(), filename);
+        File file = new File(QuestUtils.setup.getModConfigDir().getPath(), filename);
         Predicate<String> matcher = getMatcher(args, 2);
         BiPredicate<Integer, BlockPos> radiusMatcher = getRadiusMatcher(sender, args, 3);
         if (radiusMatcher == null) {
@@ -98,7 +98,7 @@ public class CmdQU extends CommandBase {
 
     private static void load(ICommandSender sender, String[] args) {
         String filename = args[1];
-        File file = new File(QuestUtils.proxy.modConfigDir.getPath(), filename);
+        File file = new File(QuestUtils.setup.getModConfigDir().getPath(), filename);
         if (!file.exists()) {
             sender.sendMessage(new TextComponentString(TextFormatting.RED + "Cannot load file!"));
             return;

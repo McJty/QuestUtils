@@ -2,20 +2,15 @@ package mcjty.questutils;
 
 
 import mcjty.lib.base.ModBase;
+import mcjty.lib.proxy.IProxy;
 import mcjty.questutils.api.IQuestUtils;
 import mcjty.questutils.apiimp.QuestUtilsApi;
 import mcjty.questutils.commands.CmdQU;
-import mcjty.questutils.integration.computers.OpenComputersIntegration;
-import mcjty.questutils.proxy.CommonProxy;
-import net.minecraft.creativetab.CreativeTabs;
+import mcjty.questutils.proxy.CommonSetup;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.*;
-import org.apache.logging.log4j.Logger;
 
 import java.util.Optional;
 import java.util.function.Function;
@@ -37,36 +32,27 @@ public class QuestUtils implements ModBase {
     public static QuestUtilsApi questUtilsApi = new QuestUtilsApi();
 
     @SidedProxy(clientSide = "mcjty.questutils.proxy.ClientProxy", serverSide = "mcjty.questutils.proxy.ServerProxy")
-    public static CommonProxy proxy;
+    public static IProxy proxy;
+    public static CommonSetup setup = new CommonSetup();
 
     @Mod.Instance(MODID)
     public static QuestUtils instance;
 
-    public static Logger logger;
-
-    public static CreativeTabs tabQuestUtils = new CreativeTabs("questutils") {
-        @Override
-        public ItemStack getTabIconItem() {
-            return new ItemStack(Blocks.CRAFTING_TABLE);
-        }
-    };
-
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event){
-        logger = event.getModLog();
+        setup.preInit(event);
         proxy.preInit(event);
     }
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent e) {
+        setup.init(e);
         proxy.init(e);
-        if (Loader.isModLoaded("opencomputers")) {
-            OpenComputersIntegration.init();
-        }
     }
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent e) {
+        setup.postInit(e);
         proxy.postInit(e);
     }
 
@@ -93,7 +79,7 @@ public class QuestUtils implements ModBase {
                 if (value.isPresent()) {
                     value.get().apply(questUtilsApi);
                 } else {
-                    logger.warn("Some mod didn't return a valid result with getQuestUtils!");
+                    setup.getLogger().warn("Some mod didn't return a valid result with getQuestUtils!");
                 }
             }
         }

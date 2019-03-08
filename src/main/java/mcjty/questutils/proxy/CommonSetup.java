@@ -1,7 +1,6 @@
 package mcjty.questutils.proxy;
 
 import mcjty.lib.McJtyRegister;
-import mcjty.lib.network.PacketHandler;
 import mcjty.lib.setup.DefaultCommonSetup;
 import mcjty.questutils.QuestUtils;
 import mcjty.questutils.blocks.ModBlocks;
@@ -23,7 +22,6 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import org.apache.logging.log4j.Level;
 
 import java.io.File;
@@ -40,8 +38,7 @@ public class CommonSetup extends DefaultCommonSetup {
 
         readMainConfig();
 
-        SimpleNetworkWrapper network = PacketHandler.registerMessages(QuestUtils.MODID, "questutils");
-        QuestUtilsMessages.registerNetworkMessages(network);
+        QuestUtilsMessages.registerMessages("questutils");
 
         ModItems.init();
         ModBlocks.init();

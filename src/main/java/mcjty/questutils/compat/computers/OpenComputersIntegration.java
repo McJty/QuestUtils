@@ -1,4 +1,4 @@
-package mcjty.questutils.integration.computers;
+package mcjty.questutils.compat.computers;
 
 import li.cil.oc.api.Driver;
 import net.minecraftforge.fml.common.Optional;

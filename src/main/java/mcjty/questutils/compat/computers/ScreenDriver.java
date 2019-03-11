@@ -1,4 +1,4 @@
-package mcjty.questutils.integration.computers;
+package mcjty.questutils.compat.computers;
 
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;

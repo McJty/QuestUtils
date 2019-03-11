@@ -4,7 +4,7 @@ import mcjty.lib.setup.DefaultCommonSetup;
 import mcjty.questutils.QuestUtils;
 import mcjty.questutils.blocks.ModBlocks;
 import mcjty.questutils.config.ConfigSetup;
-import mcjty.questutils.integration.computers.OpenComputersIntegration;
+import mcjty.questutils.compat.computers.OpenComputersIntegration;
 import mcjty.questutils.items.ModItems;
 import mcjty.questutils.network.QuestUtilsMessages;
 import net.minecraft.init.Blocks;

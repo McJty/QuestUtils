@@ -15,7 +15,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -38,6 +37,13 @@ public class CommonSetup extends DefaultCommonSetup {
     }
 
     @Override
+    protected void setupModCompat() {
+        if (Loader.isModLoaded("opencomputers")) {
+            OpenComputersIntegration.init();
+        }
+    }
+
+    @Override
     public void createTabs() {
         createTab("questutils", new ItemStack(Blocks.CRAFTING_TABLE));
     }
@@ -50,14 +56,6 @@ public class CommonSetup extends DefaultCommonSetup {
     @SubscribeEvent
     public void registerItems(RegistryEvent.Register<Item> event) {
         McJtyRegister.registerItems(QuestUtils.instance, event.getRegistry());
-    }
-
-    @Override
-    public void init(FMLInitializationEvent e) {
-        super.init(e);
-        if (Loader.isModLoaded("opencomputers")) {
-            OpenComputersIntegration.init();
-        }
     }
 
     @Override

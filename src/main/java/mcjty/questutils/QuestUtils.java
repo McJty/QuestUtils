@@ -6,7 +6,7 @@ import mcjty.lib.proxy.IProxy;
 import mcjty.questutils.api.IQuestUtils;
 import mcjty.questutils.apiimp.QuestUtilsApi;
 import mcjty.questutils.commands.CmdQU;
-import mcjty.questutils.setup.CommonSetup;
+import mcjty.questutils.setup.ModSetup;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -33,7 +33,7 @@ public class QuestUtils implements ModBase {
 
     @SidedProxy(clientSide = "mcjty.questutils.setup.ClientProxy", serverSide = "mcjty.questutils.setup.ServerProxy")
     public static IProxy proxy;
-    public static CommonSetup setup = new CommonSetup();
+    public static ModSetup setup = new ModSetup();
 
     @Mod.Instance(MODID)
     public static QuestUtils instance;

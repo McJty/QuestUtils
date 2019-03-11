@@ -4,7 +4,7 @@ import mcjty.lib.blocks.BaseBlock;
 import mcjty.questutils.QuestUtils;
 import mcjty.questutils.api.FormattedString;
 import mcjty.questutils.blocks.ModBlocks;
-import mcjty.questutils.config.GeneralConfiguration;
+import mcjty.questutils.config.ConfigSetup;
 import mcjty.questutils.rendering.ImageLoader;
 import mcjty.questutils.rendering.RenderTools;
 import net.minecraft.block.Block;
@@ -127,7 +127,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTE> {
             }
         }
 
-        if (GeneralConfiguration.BRIGHT_SCREENS) {
+        if (ConfigSetup.BRIGHT_SCREENS) {
             Minecraft.getMinecraft().entityRenderer.disableLightmap();
         }
 
@@ -135,7 +135,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTE> {
         renderObjective(tileEntity, factor);
         renderStatus(tileEntity, factor);
 
-        if (GeneralConfiguration.BRIGHT_SCREENS) {
+        if (ConfigSetup.BRIGHT_SCREENS) {
             Minecraft.getMinecraft().entityRenderer.enableLightmap();
         }
     }

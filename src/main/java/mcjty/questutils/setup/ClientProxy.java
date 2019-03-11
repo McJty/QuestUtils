@@ -1,6 +1,5 @@
 package mcjty.questutils.setup;
 
-import mcjty.lib.McJtyLibClient;
 import mcjty.lib.setup.DefaultClientProxy;
 import mcjty.questutils.QuestUtils;
 import net.minecraftforge.client.model.obj.OBJLoader;
@@ -14,6 +13,5 @@ public class ClientProxy extends DefaultClientProxy {
 
         OBJLoader.INSTANCE.addDomain(QuestUtils.MODID);
 //        ModelLoaderRegistry.registerLoader(new BakedModelLoader());
-        McJtyLibClient.preInit(e);
     }
 }

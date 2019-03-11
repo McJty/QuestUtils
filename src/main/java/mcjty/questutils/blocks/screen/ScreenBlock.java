@@ -6,7 +6,7 @@ import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.questutils.api.ScreenSize;
 import mcjty.questutils.blocks.ModBlocks;
 import mcjty.questutils.blocks.QUBlock;
-import mcjty.questutils.proxy.GuiProxy;
+import mcjty.questutils.setup.GuiProxy;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;

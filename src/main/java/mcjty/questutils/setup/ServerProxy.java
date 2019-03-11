@@ -1,4 +1,4 @@
-package mcjty.questutils.proxy;
+package mcjty.questutils.setup;
 
 
 import mcjty.lib.setup.DefaultServerProxy;

@@ -1,4 +1,4 @@
-package mcjty.questutils.proxy;
+package mcjty.questutils.setup;
 
 import mcjty.lib.blocks.GenericBlock;
 import mcjty.questutils.blocks.rewardchest.RewardChestGui;

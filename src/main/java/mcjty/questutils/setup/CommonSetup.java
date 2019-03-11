@@ -1,4 +1,4 @@
-package mcjty.questutils.proxy;
+package mcjty.questutils.setup;
 
 import mcjty.lib.McJtyRegister;
 import mcjty.lib.setup.DefaultCommonSetup;

@@ -2,7 +2,7 @@ package mcjty.questutils.blocks.rewardchest;
 
 import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.questutils.blocks.QUBlock;
-import mcjty.questutils.proxy.GuiProxy;
+import mcjty.questutils.setup.GuiProxy;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;

@@ -3,7 +3,7 @@ package mcjty.questutils.blocks.pedestal;
 import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.questutils.blocks.QUBlock;
 import mcjty.questutils.items.ModItems;
-import mcjty.questutils.proxy.GuiProxy;
+import mcjty.questutils.setup.GuiProxy;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;

@@ -31,7 +31,7 @@ public class QuestUtils implements ModBase {
 
     public static QuestUtilsApi questUtilsApi = new QuestUtilsApi();
 
-    @SidedProxy(clientSide = "mcjty.questutils.proxy.ClientProxy", serverSide = "mcjty.questutils.proxy.ServerProxy")
+    @SidedProxy(clientSide = "mcjty.questutils.setup.ClientProxy", serverSide = "mcjty.questutils.setup.ServerProxy")
     public static IProxy proxy;
     public static CommonSetup setup = new CommonSetup();
 

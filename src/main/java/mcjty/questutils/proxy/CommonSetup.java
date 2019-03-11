@@ -34,8 +34,6 @@ public class CommonSetup extends DefaultCommonSetup {
 
         MinecraftForge.EVENT_BUS.register(this);
 
-        mainConfig = new Configuration(new File(modConfigDir.getPath(), "questutils.cfg"));
-
         readMainConfig();
 
         QuestUtilsMessages.registerMessages("questutils");
@@ -59,9 +57,10 @@ public class CommonSetup extends DefaultCommonSetup {
         McJtyRegister.registerItems(QuestUtils.instance, event.getRegistry());
     }
 
-
+    private Configuration mainConfig;
 
     private void readMainConfig() {
+        mainConfig = new Configuration(new File(modConfigDir.getPath(), "questutils.cfg"));
         Configuration cfg = mainConfig;
         try {
             cfg.load();

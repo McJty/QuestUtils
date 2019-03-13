@@ -22,8 +22,6 @@ public class ModSetup extends DefaultModSetup {
 
         NetworkRegistry.INSTANCE.registerGuiHandler(QuestUtils.instance, new GuiProxy());
 
-        ConfigSetup.init();
-
         QuestUtilsMessages.registerMessages("questutils");
 
         ModItems.init();
@@ -35,6 +33,11 @@ public class ModSetup extends DefaultModSetup {
         if (Loader.isModLoaded("opencomputers")) {
             OpenComputersIntegration.init();
         }
+    }
+
+    @Override
+    protected void setupConfig() {
+        ConfigSetup.init();
     }
 
     @Override

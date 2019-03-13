@@ -22,9 +22,10 @@ public class ModSetup extends DefaultModSetup {
 
         NetworkRegistry.INSTANCE.registerGuiHandler(QuestUtils.instance, new GuiProxy());
 
+        ConfigSetup.init();
+
         QuestUtilsMessages.registerMessages("questutils");
 
-        ConfigSetup.init();
         ModItems.init();
         ModBlocks.init();
     }

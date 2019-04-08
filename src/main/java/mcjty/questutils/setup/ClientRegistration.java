@@ -14,14 +14,14 @@ import net.minecraftforge.fml.relauncher.Side;
 public class ClientRegistration {
 
     @SubscribeEvent
-    public void registerModels(ModelRegistryEvent event) {
+    public static void registerModels(ModelRegistryEvent event) {
         ModItems.initModels();
         ModBlocks.initModels();
     }
 
 
     @SubscribeEvent
-    public void registerSounds(RegistryEvent.Register<SoundEvent> sounds) {
+    public static void registerSounds(RegistryEvent.Register<SoundEvent> sounds) {
 //        SoundController.init(sounds.getRegistry());
     }
 }

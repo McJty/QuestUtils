@@ -42,7 +42,7 @@ public class ModSetup extends DefaultModSetup {
 
     @Override
     public void createTabs() {
-        createTab("questutils", new ItemStack(Blocks.CRAFTING_TABLE));
+        createTab("questutils", () -> new ItemStack(Blocks.CRAFTING_TABLE));
     }
 
     @Override
